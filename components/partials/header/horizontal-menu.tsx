@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { Link, usePathname } from "@/components/navigation";
 import { useConfig } from '@/hooks/use-config'
 import { useTranslations } from 'next-intl';
-import { getHorizontalMenuList } from "@/lib/menus";
+import { getMenuList } from "@/lib/menus";
 import { Icon } from "@/components/ui/icon";
 import {
   Menubar,
@@ -31,7 +31,7 @@ export default function HorizontalMenu() {
   const t = useTranslations("Menu");
   const pathname = usePathname();
 
-  const menuList = getHorizontalMenuList(pathname, t)
+  const menuList = getMenuList(pathname, t);
 
   const [openDropdown, setOpenDropdown] = React.useState<boolean>(false);
 
