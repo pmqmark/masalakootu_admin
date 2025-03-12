@@ -67,9 +67,6 @@ export function MenuClassic({ }) {
                 </div>
             )}
 
-
-
-
             <ScrollArea className="[&>div>div[style]]:!block" dir={direction}>
                 {isDesktop && (
                     <div className={cn(' space-y-3 mt-6 ', {
@@ -113,9 +110,7 @@ export function MenuClassic({ }) {
                                                 <TooltipProvider disableHoverableContent>
                                                     <Tooltip delayDuration={100}>
                                                         <TooltipTrigger asChild>
-
                                                             <div>
-
                                                                 <MenuItem label={label} icon={icon} href={href} active={active} id={id} collapsed={collapsed} />
                                                             </div>
                                                         </TooltipTrigger>
@@ -136,12 +131,10 @@ export function MenuClassic({ }) {
                                                     submenus={submenus}
                                                     collapsed={collapsed}
                                                     id={id}
-
                                                 />
                                             </div>
                                         )
                                 )}
-
                             </li>
                         ))}
                         {!collapsed && (
