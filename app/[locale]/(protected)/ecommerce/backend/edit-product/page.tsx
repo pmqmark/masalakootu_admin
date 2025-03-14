@@ -1,489 +1,147 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
+import { useState, useEffect } from "react";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
-const EditProduct = () => {
+const EditProduct = ({ product }) => {
+  const [productData, setProductData] = useState({
+    name: "",
+    description: "",
+    brand: "",
+    price: "",
+    thumbnail: { location: "", name: "", key: "" },
+    images: [],
+    stock: 0,
+    tags: [],
+    isFeatured: false,
+    isArchived: false,
+    reviews: [],
+    variations: [],
+  });
+
+  useEffect(() => {
+    if (product) {
+      setProductData(product);
+    }
+  }, [product]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setProductData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fileUrl = URL.createObjectURL(file);
+    setProductData((prev) => ({
+      ...prev,
+      images: [...prev.images, { location: fileUrl, name: file.name, key: "" }],
+    }));
+  };
+
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fileUrl = URL.createObjectURL(file);
+    setProductData((prev) => ({
+      ...prev,
+      thumbnail: { location: fileUrl, name: file.name, key: "" },
+    }));
+  };
+
+  const handleRemoveImage = (index) => {
+    setProductData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Updated Product Data:", productData);
+  };
+
   return (
-    <div className=" grid grid-cols-12  gap-4  rounded-lg">
-      <div className="col-span-12 md:col-span-7 space-y-4 lg:col-span-7 ">
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Product Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[150px] flex-none" htmlFor="h_Fullname">
-                Product Name
-              </Label>
-              <Input id="h_Fullname" type="text" placeholder="Full name" />
+    <Card className="max-w-lg mx-auto p-4 border rounded-lg shadow-md">
+      <CardHeader>
+        <h1 className="text-xl font-bold">Edit Product</h1>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block font-medium">Product Name *</label>
+            <Input type="text" name="name" value={productData.name} onChange={handleChange} required />
+          </div>
+          <div>
+            <label className="block font-medium">Description</label>
+            <Input type="text" name="description" value={productData.description} onChange={handleChange} />
+          </div>
+          <div>
+            <label className="block font-medium">Brand</label>
+            <Input type="text" name="brand" value={productData.brand} onChange={handleChange} />
+          </div>
+          <div>
+            <label className="block font-medium">Price *</label>
+            <Input type="number" name="price" value={productData.price} onChange={handleChange} required />
+          </div>
+          <div>
+            <label className="block font-medium">Stock</label>
+            <Input type="number" name="stock" value={productData.stock} onChange={handleChange} />
+          </div>
+          <div>
+            <label className="block font-medium">Tags</label>
+            <Input type="text" name="tags" value={productData.tags} onChange={handleChange} />
+          </div>
+          <div>
+            <label className="block font-medium">Thumbnail *</label>
+            {productData.thumbnail.location && (
+              <img src={productData.thumbnail.location} alt="Thumbnail" className="w-24 h-24 object-cover border rounded" />
+            )}
+            <Input type="file" accept="image/*" onChange={handleThumbnailChange} className="mt-2" />
+          </div>
+          <div>
+            <label className="block font-medium">Product Images *</label>
+            <div className="flex gap-2 flex-wrap">
+              {productData.images.map((image, index) => (
+                <div key={index} className="relative">
+                  <img src={image.location} alt={`Product ${index}`} className="w-24 h-24 object-cover border rounded" />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full p-1"
+                  >
+                    X
+                  </button>
+                </div>
+              ))}
             </div>
-
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[150px] flex-none">Category</Label>
-              <Select>
-                <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Category</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[150px] flex-none">Brand</Label>
-              <Select>
-                <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select Brand" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Brand</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[150px] flex-none" htmlFor="unit">
-                Unit
-              </Label>
-              <Input
-                id="unit"
-                type="text"
-                placeholder="Unit (e.g. KG, Pc etc)"
-              />
-            </div>
-
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[150px] flex-none" htmlFor="weight">
-                Label Wight (in kg)
-              </Label>
-              <Input id="weight" type="text" placeholder="0.00" />
-            </div>
-
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[150px] flex-none" htmlFor="qty">
-                Minimum Purchase Qty
-              </Label>
-              <Input id="qty" type="text" placeholder="1" />
-            </div>
-
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[150px] flex-none" htmlFor="tags">
-                Tags
-              </Label>
-              <Input
-                id="tags"
-                type="text"
-                placeholder="Type & hit enter to add a tag"
-              />
-            </div>
-
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[150px] flex-none" htmlFor="brcode">
-                Barcode
-              </Label>
-              <Input id="brcode" type="text" placeholder="Code" />
-            </div>
-            <div className="flex items-center flex-wrap gap-10">
-              <Label className="flex-none w-[132px] ">Refundable</Label>
-              <div className="flex-1">
-                <Switch color="success" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Product Images</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-6 rtl:space-x-reverse">
-              <Label className="inline-flex text-sm font-normal ">
-                Gallery Images (600 X 600)
-              </Label>
-              <div className="flex-1">
-                <Input
-                  className="read-only:leading-0 py-1.5 h-full ps-0"
-                  type="file"
-                />
-              </div>
-            </div>
-            <div className="flex items-center space-x-6 rtl:space-x-reverse">
-              <Label className="inline-flex text-sm font-normal ">
-                Thumb Images (600 X 600)
-              </Label>
-              <div className="flex-1">
-                <Input
-                  className="read-only:leading-0 py-1.5 h-full ps-0"
-                  type="file"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Product Variation</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[132px]">Color</Label>
-              <Select>
-                <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select Color" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Color</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[132px]">Attributes</Label>
-              <Select>
-                <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select Attributes" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Attributes</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center flex-wrap">
-              <Label className="w-[132px]">Size</Label>
-              <Select>
-                <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select Size" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Size</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Product Description</CardTitle>
-          </CardHeader>
-          <CardContent className="flex">
-            <Label className="w-[130px] flex-none">Description</Label>
-            <Textarea id="pn4" placeholder="Some product description..." />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>PDF Specification</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-10 rtl:space-x-reverse">
-              <Label className="inline-flex text-sm font-normal">
-                Add PDF File
-              </Label>
-              <div className="flex-1">
-                <Input
-                  className="read-only:leading-0 py-1.5 h-full ps-0"
-                  type="file"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>SEO Meta Tags</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex">
-              <Label className="w-[130px]">Meta Title</Label>
-              <Input id="meta_title" type="text" placeholder="Title" />
-            </div>
-
-            <div className="flex">
-              <Label className="w-[130px]">Description</Label>
-              <Textarea
-                id="pn4"
-                placeholder="Write something for your product seo"
-              />
-            </div>
-            <div className="flex items-center ">
-              <Label className="flex-none w-[130px] ">Meta Image</Label>
-              <Input
-                className="read-only:leading-0 py-1.5 h-full ps-0"
-                type="file"
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="col-span-12 md:col-span-5 space-y-4 lg:col-span-5">
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Shipping Configuration</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between">
-              <Label>Free Shipping</Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <Label>Flat Rate</Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <Label>Is Product Quantity Multiply</Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Low Stock Quantity Warning</CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center">
-            <Label className="w-[130px] flex-none">Quantity</Label>
-            <Input id="qty_warning" type="text" placeholder="1" />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Stock Visibility State</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between">
-              <Label className="text-sm font-normal">Show Stock Quantity</Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <Label className="text-sm font-normal">
-                Show Stock With Text Only
-              </Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <Label className="text-sm font-normal">Hide Stock</Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Cash On Delivery</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between">
-              <Label className="text-sm font-normal">Status</Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Featured</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between">
-              <Label className="text-sm font-normal">Status</Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Todays Deal</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between">
-              <Label className="text-sm font-normal">Status</Label>
-              <div>
-                <Switch color="success" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Flash Deal</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center">
-              <Label className="w-[150px] flex-none">Category</Label>
-              <Select>
-                <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Category</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center">
-              <Label className="w-[150px] flex-none">Discount</Label>
-              <Input id="discount" type="text" placeholder="0" />
-            </div>
-
-            <div className="flex items-center">
-              <Label className="w-[150px] flex-none">Type</Label>
-              <Select>
-                <SelectTrigger className="flex-1">
-                  <SelectValue placeholder="Select Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Type</SelectLabel>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Estimate Shipping Time</CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center">
-            <Label className="w-[150px] flex-none">LabelShipping Days</Label>
-            <Input id="shipping_days" type="text" placeholder="07" />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="border-b border-solid border-default-200 mb-6">
-            <CardTitle>Estimate Shipping Tax</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-4">
-              <div className="flex items-center">
-                <Label className="flex-none w-10">VAT</Label>
-                <Input
-                  className="inline-flex"
-                  id="vat"
-                  type="text"
-                  placeholder="00"
-                />
-              </div>
-              <div className="flex-1">
-                <Select>
-                  <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Flat" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Flat</SelectLabel>
-                      <SelectItem value="apple">Apple</SelectItem>
-                      <SelectItem value="banana">Banana</SelectItem>
-                      <SelectItem value="blueberry">Blueberry</SelectItem>
-                      <SelectItem value="grapes">Grapes</SelectItem>
-                      <SelectItem value="pineapple">Pineapple</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <div className="flex items-center">
-                <Label className="flex-none w-10">TAX</Label>
-                <Input type="text" placeholder="00" />
-              </div>
-              <div className="flex-1">
-                <Select>
-                  <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Percent" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Percent</SelectLabel>
-                      <SelectItem value="apple">Apple</SelectItem>
-                      <SelectItem value="banana">Banana</SelectItem>
-                      <SelectItem value="blueberry">Blueberry</SelectItem>
-                      <SelectItem value="grapes">Grapes</SelectItem>
-                      <SelectItem value="pineapple">Pineapple</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="col-span-12 flex justify-end">
-        <Button>Update Product</Button>
-      </div>
-    </div>
+            <Input type="file" accept="image/*" onChange={handleFileChange} className="mt-2" />
+          </div>
+          <div>
+            <label className="flex items-center space-x-2">
+              <input type="checkbox" name="isFeatured" checked={productData.isFeatured} onChange={handleChange} />
+              <span>Featured Product</span>
+            </label>
+          </div>
+          <div>
+            <label className="flex items-center space-x-2">
+              <input type="checkbox" name="isArchived" checked={productData.isArchived} onChange={handleChange} />
+              <span>Archive Product</span>
+            </label>
+          </div>
+          <div className="col-span-12 flex justify-end">
+            <Button type="submit">Update Product</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

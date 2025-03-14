@@ -13,7 +13,7 @@ export type DataProps = {
     name: string;
     image: string;
   };
-  category: string;
+  Brand: string;
   seller: string;
   stock: number;
   info: {
@@ -77,9 +77,9 @@ export const columns: ColumnDef<DataProps>[] = [
     },
   },
   {
-    accessorKey: "category",
-    header: "Category",
-    cell: ({ row }) => <span>{row.getValue("category")}</span>,
+    accessorKey: "Brand",
+    header: "Brand",
+    cell: ({ row }) => <span>{row.getValue("Brand")}</span>,
   },
   {
     accessorKey: "info",
@@ -130,7 +130,7 @@ export const columns: ColumnDef<DataProps>[] = [
       return (
         <div className="flex items-center gap-1">
           <Link
-            href="/utility/invoice/preview/1"
+            href="/ecommerce/backend/edit-product"
             className="flex items-center p-2 border-b text-info hover:text-info-foreground bg-info/40 hover:bg-info duration-200 transition-all rounded-full"
           >
             <SquarePen className="w-4 h-4" />

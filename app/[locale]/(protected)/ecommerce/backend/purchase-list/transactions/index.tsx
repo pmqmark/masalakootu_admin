@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import {
   ColumnFiltersState,
@@ -14,7 +13,8 @@ import {
 } from "@tanstack/react-table";
 import { columns } from "./columns";
 import { Input } from "@/components/ui/input";
-
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -37,8 +37,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+// import { Button } from "react-day-picker";
+import { Button } from "@/components/ui/button"; // Correct import
+
+
 
 const TransactionsTable = () => {
+  
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -65,7 +70,8 @@ const TransactionsTable = () => {
       rowSelection,
     },
   });
-
+  const pathname = usePathname(); 
+  const locale = pathname.split("/")[1];
   return (
     <div className="w-full">
       <div className="flex items-center py-4 px-6 border-b border-solid border-default-200">
@@ -74,6 +80,9 @@ const TransactionsTable = () => {
         </div>
         <div className="flex-none">
           <div className="flex items-center gap-4 flex-wrap">
+          <Link href={`/${locale}/ecommerce/backend/add-product`} passHref>
+      <Button >Add +</Button>
+    </Link>
             <Select>
               <SelectTrigger className=" w-[150px]">
                 <SelectValue placeholder="Bulk Action" />
