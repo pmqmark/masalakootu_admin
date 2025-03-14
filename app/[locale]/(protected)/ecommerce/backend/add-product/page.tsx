@@ -23,7 +23,7 @@ const AddProduct = () => {
 
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setProductData((prev) => ({
       ...prev,
@@ -60,7 +60,7 @@ const AddProduct = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!productData.name || !productData.price || productData.images.length === 0) {
       setError("Name, price, and at least one image are required.");

@@ -2,15 +2,6 @@ export type SubChildren = {
   href: string;
   label: string;
   active: boolean;
-  children?: SubChildren[];
-};
-export type Submenu = {
-  href: string;
-  label: string;
-  active: boolean;
-  icon: any;
-  submenus?: Submenu[];
-  children?: SubChildren[];
 };
 
 export type Menu = {
@@ -18,8 +9,8 @@ export type Menu = {
   label: string;
   active: boolean;
   icon: any;
-  submenus: Submenu[];
   id: string;
+  children?: SubChildren[]; // Only "Products" will have children
 };
 
 export type Group = {
@@ -36,83 +27,79 @@ export function getMenuList(pathname: string, t: any): Group[] {
       menus: [],
     },
     {
-      groupLabel: " ",
+      label: " ",
       id: "",
       menus: [
         {
-          id: "add-product",
-          href: "/ecommerce/backend/add-product",
-          label: t("Add Product"),
-          active: pathname.includes("/ecommerce/backend/add-product"),
-          icon: "heroicons-outline:chat",
-          submenus: [],
+          id: "products",
+          href: "/ecommerce/backend/products", // Set a valid URL instead of "#"
+          label: t("Products"),
+          active:
+            pathname.includes("/ecommerce/backend/add-product") ||
+            pathname.includes("/ecommerce/backend/purchase-list"),
+          icon: "heroicons-outline:shopping-cart",
+          children: [
+            {
+              href: "/ecommerce/backend/add-product",
+              label: t("Add Product"),
+              active: pathname === "/ecommerce/backend/add-product",
+            },
+            {
+              href: "/ecommerce/backend/purchase-list",
+              label: t("Products List"),
+              active: pathname === "/ecommerce/backend/purchase-list",
+            },
+          ],
         },
+        
         {
           id: "customer-list",
           href: "/ecommerce/backend/customer-list",
           label: t("Customer List"),
-          active: pathname.includes("/ecommerce/backend/customer-list"),
-          icon: "heroicons-outline:mail",
-          submenus: [],
+          active: pathname === "/ecommerce/backend/customer-list",
+          icon: "heroicons-outline:user-group",
         },
         {
           id: "edit-product",
           href: "/ecommerce/backend/edit-product",
           label: t("Edit Product"),
-          active: pathname.includes("/ecommerce/backend/edit-product"),
-          icon: "heroicons-outline:view-boards",
-          submenus: [],
+          active: pathname === "/ecommerce/backend/edit-product",
+          icon: "heroicons-outline:pencil",
         },
         {
           id: "invoice",
           href: "/ecommerce/backend/invoice",
           label: t("Invoice"),
-          active: pathname.includes("/ecommerce/backend/invoice"),
+          active: pathname === "/ecommerce/backend/invoice",
           icon: "heroicons-outline:calendar",
-          submenus: [],
         },
         {
           id: "order-details",
           href: "/ecommerce/backend/order-details",
           label: t("Order Details"),
-          active: pathname.includes("/ecommerce/backend/order-details"),
+          active: pathname === "/ecommerce/backend/order-details",
           icon: "heroicons-outline:clipboard-check",
-          submenus: [],
         },
         {
           id: "order-list",
           href: "/ecommerce/backend/order-list",
           label: t("Order List"),
-          active: pathname.includes("/ecommerce/backend/order-list"),
-          icon: "heroicons-outline:document",
-          submenus: [],
-        },
-        {
-          id: "purchase-list",
-          href: "/ecommerce/backend/purchase-list",
-          label: t("Purchase List"),
-          active: pathname.includes("/ecommerce/backend/purchase-list"),
-          icon: "heroicons-outline:document",
-          submenus: [],
+          active: pathname === "/ecommerce/backend/order-list",
+          icon: "heroicons-outline:clipboard-list",
         },
         {
           id: "sellers",
           href: "/ecommerce/backend/sellers",
           label: t("Sellers"),
-          active: pathname.includes("/ecommerce/backend/sellers"),
-          icon: "heroicons-outline:document",
-          submenus: [],
+          active: pathname === "/ecommerce/backend/sellers",
+          icon: "heroicons-outline:briefcase",
         },
       ],
     },
-    // Commented out other menus properly
-    // {
-    //   groupLabel: t("other-section"),
-    //   id: "other",
-    //   menus: [...],
-    // },
   ];
 }
+
+
 
 
 

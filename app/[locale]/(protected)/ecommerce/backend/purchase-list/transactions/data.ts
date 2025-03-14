@@ -8,7 +8,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -26,7 +26,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -44,7 +44,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -62,7 +62,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -80,7 +80,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -98,7 +98,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -116,7 +116,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -134,7 +134,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -152,7 +152,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -170,7 +170,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -188,7 +188,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -206,7 +206,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -224,7 +224,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -242,7 +242,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -260,7 +260,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -278,7 +278,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -296,7 +296,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -314,7 +314,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -332,7 +332,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -350,7 +350,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -368,7 +368,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -386,7 +386,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -404,7 +404,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -422,7 +422,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -440,7 +440,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -458,7 +458,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -476,7 +476,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -494,7 +494,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -512,7 +512,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -530,7 +530,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -548,7 +548,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -566,7 +566,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -584,7 +584,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -602,7 +602,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -620,7 +620,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -638,7 +638,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -656,7 +656,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -674,7 +674,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -692,7 +692,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -710,7 +710,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -728,7 +728,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -746,7 +746,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -764,7 +764,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -782,7 +782,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -800,7 +800,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -818,7 +818,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -836,7 +836,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -854,7 +854,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -872,7 +872,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
@@ -890,7 +890,7 @@ export const data: DataProps[] = [
       
     },
     seller: 'Codeshaper.ltd',
-    category:'clothing',
+    Brand:'clothing',
     info:{
       soldItems: 25,
       basePrice:"$145.00",
