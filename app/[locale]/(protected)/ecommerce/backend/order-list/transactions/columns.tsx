@@ -127,10 +127,12 @@ export const columns: ColumnDef<DataProps>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const productId = row.original.id; 
+      
       return (
         <div className="flex items-center gap-1">
           <Link
-            href="/utility/invoice/preview/1"
+            href={`/ecommerce/backend/product/${productId}`}
             className="flex items-center p-2 border-b text-warning hover:text-warning-foreground bg-warning/40 hover:bg-warning duration-200 transition-all rounded-full"
           >
             <Eye className="w-4 h-4" />

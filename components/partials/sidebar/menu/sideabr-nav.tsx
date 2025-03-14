@@ -26,9 +26,6 @@ const SidebarNav = ({ menuList }: { menuList: Group[] }) => {
     return null;
   }
 
-
-
-
   return (
     <div className=' h-full bg-sidebar  shadow-base  w-[228px] relative z-20'>
       {config.sidebarBgImage !== undefined && (

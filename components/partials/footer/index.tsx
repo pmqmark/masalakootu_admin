@@ -11,16 +11,16 @@ const DashCodeFooter = async () => {
         <FooterContent>
             <div className=' md:flex  justify-between text-default-600 hidden'>
                 <div className="text-center ltr:md:text-start rtl:md:text-right text-sm">
-                    COPYRIGHT &copy; {new Date().getFullYear()} DashCode, All rights Reserved
+                    COPYRIGHT &copy; {new Date().getFullYear()} Masalakoottu, All rights Reserved
                 </div>
                 <div className="ltr:md:text-right rtl:md:text-end text-center text-sm">
-                    Hand-crafted & Made by{" "}
+                    Made by{" "}
                     <a
-                        href="https://codeshaper.net"
+                        href="https://www.qmarktechnolabs.com/"
                         target="_blank"
                         className="text-primary font-semibold"
                     >
-                        Codeshaper
+                        Qmark Technolabs
                     </a>
                 </div>
             </div>

@@ -68,7 +68,7 @@ const Login = ({ params: { locale } }: { params: { locale: string } }) => {
                 </div>
               </div>
               <div className="text-xs font-normal text-default-500  z-[999] pb-10 text-center">
-                <Copyright />
+                {/* <Copyright /> */}
               </div>
             </div>
           </div>
