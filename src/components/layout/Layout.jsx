@@ -4,9 +4,10 @@ import Footer from "./Footer.jsx";
 import Sidebar from "./Sidebar.jsx";
 import Login from "../../pages/login/Login.jsx";
 import Signup from "../../pages/login/Signup.jsx";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { Routes, Route, useNavigate } from "react-router-dom";
+
 
 const Layout = () => {
   const isAuthenticated = useSelector(state => state.authentication.isAuthenticated);

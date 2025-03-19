@@ -1,23 +1,27 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import * as Icons from 'react-icons/tb';
+import { login } from '../../store/slices/authenticationSlice.jsx';
 import { useDispatch } from 'react-redux';
-import Logo from "../../images/common/logo-dark.svg";
+import * as Icons from 'react-icons/tb';
 import Input from '../../components/common/Input.jsx';
 import Button from '../../components/common/Button.jsx';
 import CheckBox from '../../components/common/CheckBox.jsx';
-import {login} from '../../store/slices/authenticationSlice.jsx';
+import { loginAuth } from '../../lib/endPoints.js';
+import axios from '../../config/axios.js';
+import { toast } from 'sonner';
+import { setAccessToken, setRefreshToken } from '../../store/slices/tockenSlicer.jsx';
 
 const Login = () => {
   const dispatch = useDispatch();
 
   const [formData, setFormData] = useState({
-    email: "",
+    credential: "",
     password: "",
   });
   const [isRemember, setIsRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (fieldName, newValue) => {
     setFormData((prevFormData) => ({
@@ -34,15 +38,23 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (formData.email === "eventadmin@gmail.com" && formData.password === "eventadmin") {
-      dispatch(login())
-    } else {
+    console.log(formData)
+    setIsLoading(true)
+    try {
+      const res = await axios.post(loginAuth, formData);
+      console.log(res.data);
+      dispatch(login(res.data.data.userInfo));
+      dispatch(setAccessToken(res.data.data.accessToken));
+      dispatch(setRefreshToken(res.data.data.refreshToken));
+      toast.success(res.data.data?.message || "Login Successfully")
+    } catch (error) {
       setLoginError(true);
-      setTimeout(() => {
-        setLoginError(false);
-      }, 5000);
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+      setLoginError(false);
     }
   };
 
@@ -53,23 +65,24 @@ const Login = () => {
           <img src="https://images.unsplash.com/photo-1694537745985-34eacdf76139?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80" alt="" />
         </figure>
       </div>
-      <div className="login_form">
-        <div className="login_content">
-          <div to="/" className="logo">
-            <img src={Logo} alt="logo" />
+      <div className="w-full lg:max-w-[500px] flex flex-col items-center justify-center p-5">
+        <div className="w-full flex flex-col gap-5 mb-5 md:px-8">
+          <div to="/" className="w-full ">
+            {/* <img src={Logo} alt="logo" /> */}
+            <h2 className='w-full font-semibold text-2xl'>Masalakooottu Admin</h2>
           </div>
-          <h2 className="page_heading">Login</h2>
+          <h2 className="text-xl font-medium">Login</h2>
         </div>
-        <form className="form" onSubmit={handleLogin}>
+        <form className="form space-y-5" onSubmit={handleLogin}>
           <div className="form_control">
             <Input
               type="text"
-              value={formData.email}
+              value={formData.credential}
               onChange={(value) =>
-                handleInputChange("email", value)
+                handleInputChange("credential", value)
               }
               placeholder="Email or Phone Number"
-              icon={<Icons.TbMail/>}
+              icon={<Icons.TbMail />}
               label="Email or Number"
             />
           </div>
@@ -83,7 +96,7 @@ const Login = () => {
               placeholder="Password"
               label="Password"
               onClick={handleShowPassword}
-              icon={<Icons.TbEye/>}
+              icon={<Icons.TbEye />}
             />
           </div>
           <div className="form_control">
@@ -97,20 +110,20 @@ const Login = () => {
           {loginError && <small className="incorrect">Incorrect email or password and Remember me</small>}
           <div className="form_control">
             <Button
-              label="Login"
+              label={isLoading ? "Loading..." : "Submit"}
               type="submit"
             />
           </div>
         </form>
-        <p className="signup_link">
-          Don't have an account yet? <Link to="/signup">Join Metronic</Link>
+        <p className="flex gap-3 justify-start">
+          Do you have any issue? <Link to="https://qmarktechnolabs.com">Qmark Technolabs</Link>
         </p>
-        <button className="google_signin">
+        {/* <button className="google_signin">
           <figure>
             <img src="https://img.icons8.com/color/1000/google-logo.png" alt="" />
           </figure>
           <h2>Sign in with Google</h2>
-        </button>
+        </button> */}
       </div>
     </div>
   );

@@ -2,6 +2,10 @@
 /* ALL COMPONENT CSS */
 @import url('../components/common/style.css');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   margin: 0;
   padding: 0;
@@ -372,7 +376,6 @@ figure img {
 
 .logo {
   height: 50px;
-  width: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -649,6 +652,7 @@ li:has(.sub_menu.active)>.menu_link svg:not(.menu_icon) {
   overflow: auto;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .login_sidebar {
