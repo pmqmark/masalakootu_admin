@@ -1,6 +1,5 @@
 import * as Icons from "react-icons/tb";
-import Products from "../../api/Products.json";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input.jsx";
 import Badge from "../../components/common/Badge.jsx";
@@ -12,6 +11,10 @@ import Pagination from "../../components/common/Pagination.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import RangeSlider from "../../components/common/RangeSlider.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
+import { getAllProducts } from "../../lib/endPoints.js";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import axios from "../../config/axios.js";
+// import Products from "../../api/Products.json";
 
 const ManageProduct = () => {
   const [fields, setFields] = useState({
@@ -19,8 +22,10 @@ const ManageProduct = () => {
     sku: "",
     store: "",
     status: "",
-    priceRange: [0,100],
+    priceRange: [0, 100],
   });
+  const [products, setProducts] = useState([]);
+  const [isLoading, setLoading] = useState(false)
   const [bulkCheck, setBulkCheck] = useState(false);
   const [specificChecks, setSpecificChecks] = useState({});
   const navigate = useNavigate();
@@ -31,13 +36,33 @@ const ManageProduct = () => {
     { value: 5, label: "5" },
     { value: 10, label: "10" },
   ]);
+
+  const axiosPrivate = useAxiosPrivate();
+
   const handleInputChange = (key, value) => {
     setFields({
       ...product,
       [key]: value,
     });
   };
-  const products = Products;
+  // const products = Products;
+
+  const getProduct = async () => {
+    setLoading(true)
+    try {
+      const res = await axiosPrivate.get(getAllProducts);
+      console.log(res.data, 'get all products');
+      setProducts(res?.data?.data?.result)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getProduct()
+  }, [])
 
   const bulkAction = [
     { value: "delete", label: "Delete" },
@@ -106,17 +131,17 @@ const ManageProduct = () => {
   };
 
   const stores = [
-      { label: 'FashionFiesta' },
-      { label: 'TechTreasures' },
-      { label: 'GadgetGrove' },
-      { label: 'HomeHarbor' },
-      { label: 'HealthHaven' },
-      { label: 'BeautyBoutique' },
-      { label: "Bookworm's Haven" },
-      { label: 'PetParadise' },
-      { label: 'FoodieFinds' }
+    { label: 'FashionFiesta' },
+    { label: 'TechTreasures' },
+    { label: 'GadgetGrove' },
+    { label: 'HomeHarbor' },
+    { label: 'HealthHaven' },
+    { label: 'BeautyBoutique' },
+    { label: "Bookworm's Haven" },
+    { label: 'PetParadise' },
+    { label: 'FoodieFinds' }
   ];
-const status = [
+  const status = [
     { label: 'In Stock' },
     { label: 'Out of Stock' },
     { label: 'Available Soon' },
@@ -128,7 +153,7 @@ const status = [
     { label: 'Coming Soon' },
     { label: 'New Arrival' },
     { label: 'Preorder' },
-];
+  ];
   const handleSelectStore = (selectedValues) => {
     setFields({
       ...fields,
@@ -234,11 +259,6 @@ const status = [
                   <Icons.TbPlus />
                   <span>Create Product</span>
                 </Link>
-                <Button
-                  label="Reload"
-                  icon={<Icons.TbRefresh />}
-                  className="sm"
-                />
               </div>
             </div>
             <div className="content_body">
@@ -265,69 +285,85 @@ const status = [
                     </tr>
                   </thead>
                   <tbody>
-                    {products.map((product, key) => {
-                      return (
-                        <tr key={key}>
-                          <td className="td_checkbox">
-                            <CheckBox
-                              onChange={(isCheck) =>
-                                handleCheckProduct(isCheck, product.id)
-                              }
-                              isChecked={specificChecks[product.id] || false}
-                            />
-                          </td>
-                          <td className="td_id">{product.id}</td>
-                          <td className="td_image">
-                            <img
-                              src={product.images.thumbnail}
-                              alt={product.name}
-                            />
-                          </td>
-                          <td colSpan="4">
-                            <Link to={product.id}>{product.name}</Link>
-                          </td>
-                          <td>
-                            {`${product.price} `}
-                            <b>{product.currency}</b>
-                          </td>
-                          <td>
-                            <Link>{product.brand}</Link>
-                          </td>
-                          <td>{product.sku}</td>
-                          <td>{product.availability_dates.start_date}</td>
-                          <td className="td_status">
-                            {product.ratings.average_rating}
-                          </td>
-                          <td className="td_status">
-                            {product.inventory.in_stock ? (
-                              <Badge
-                                label="In Stock"
-                                className="light-success"
-                              />
-                            ) : product.inventory.quantity < 10 &&
-                              product.inventory.quantity > 0 ? (
-                              <Badge
-                                label="Low Stock"
-                                className="light-warning"
-                              />
-                            ) : (
-                              <Badge
-                                label="Out of Stock"
-                                className="light-danger"
-                              />
-                            )}
-                          </td>
-                          <td className="td_action">
-                            <TableAction
-                              actionItems={actionItems}
-                              onActionItemClick={(item) =>
-                                handleActionItemClick(item, product.id)
-                              }
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {
+                      isLoading ? (
+                        <div>
+                          <h1>Loading....</h1>
+                        </div>
+                      ) : (
+                        products.map((product, key) => {
+                          return (
+                            <tr key={key}>
+                              <td className="td_checkbox">
+                                <CheckBox
+                                  onChange={(isCheck) =>
+                                    handleCheckProduct(isCheck, product?._id)
+                                  }
+                                  isChecked={specificChecks[product?._id] || false}
+                                />
+                              </td>
+                              <td className="td_id">{product?._id}</td>
+                              <td className="td_image">
+                                {
+                                  product?.thumbnail ? (<img
+                                    src={product?.thumbnail?.location}
+                                    alt={product?.name}
+                                  />) : (<img
+                                    src='/public/dummy.jpg'
+                                    alt={product?.name}
+                                  />
+                                  )
+                                }
+
+                              </td>
+                              <td colSpan="4">
+                                <Link to={product.id}>{product.name}</Link>
+                              </td>
+                              <td>
+                                {`${product.price} `}
+                                <b>{product?.currency}</b>
+                              </td>
+                              <td>
+                                <Link>{product?.brand}</Link>
+                              </td>
+                              <td>{product?.sku}</td>
+                              <td>{product?.createdAt.split("T")[0]}</td>
+                              <td className="td_status">
+                                {product?.ratings?.average_rating}
+                              </td>
+                              <td className="td_status">
+                                {product?.stock ? (
+                                  <Badge
+                                    label="In Stock"
+                                    className="light-success"
+                                  />
+                                ) : product?.stock < 10 &&
+                                  product?.stock > 0 ? (
+                                  <Badge
+                                    label="Low Stock"
+                                    className="light-warning"
+                                  />
+                                ) : (
+                                  <Badge
+                                    label="Out of Stock"
+                                    className="light-danger"
+                                  />
+                                )}
+                              </td>
+                              <td className="td_action">
+                                <TableAction
+                                  actionItems={actionItems}
+                                  onActionItemClick={(item) =>
+                                    handleActionItemClick(item, product?._id)
+                                  }
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )
+                    }
+
                   </tbody>
                 </table>
               </div>

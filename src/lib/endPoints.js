@@ -10,3 +10,6 @@ if (is_development) {
 
 // Login Routes
 export const loginAuth = "auth/login";
+
+// Products
+export const getAllProducts = "products/all";

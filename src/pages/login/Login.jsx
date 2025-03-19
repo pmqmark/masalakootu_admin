@@ -9,7 +9,7 @@ import CheckBox from '../../components/common/CheckBox.jsx';
 import { loginAuth } from '../../lib/endPoints.js';
 import axios from '../../config/axios.js';
 import { toast } from 'sonner';
-import { setAccessToken, setRefreshToken } from '../../store/slices/tockenSlicer.jsx';
+import { setAccessToken, setRefreshToken } from '../../store/slices/tokenSlicer.jsx';
 
 const Login = () => {
   const dispatch = useDispatch();
