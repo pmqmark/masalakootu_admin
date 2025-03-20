@@ -16,19 +16,21 @@ const MultiSelect = ({
   const [filteredOptions, setFilteredOptions] = useState(options);
   const inputRef = useRef(null);
 
-  const selectedHandle = (value) => {
+  const selectedHandle = (option) => {
+    const {value, label} = option;
     if (!isMulti) {
-      setSelected([value]);
+      setSelected([option]);
       setBool(false);
       setValue("");
       setFilteredOptions(options);
     } else {
-      setSelected((prevSelected) => [...prevSelected, value]);
+      setSelected((prevSelected) => [...prevSelected, option]);
       setBool(false);
       setValue("");
       setFilteredOptions(options);
     }
-    onChange(isMulti ? [...selected, value] : [value])
+    const selectedValues = selected?.map(item=> item?.value)
+    onChange(isMulti ? [...selectedValues, value] : [value])
   };
 
   const inputClickHandle = () => {
@@ -52,7 +54,7 @@ const MultiSelect = ({
   };
 
   const removeTagHandle = (tag) => {
-    setSelected(selected.filter((selectedValue) => selectedValue !== tag));
+    setSelected(selected.filter((item) => item?.value !== tag));
     setFilteredOptions(options);
   };
 
@@ -80,13 +82,13 @@ const MultiSelect = ({
             key={key}
             className={`${!isMulti ? "selected_tag single" : "selected_tag"}`}
           >
-            {select}
+            {select.label}
             {!isMulti ? (
               ""
             ) : (
               <Icons.TbX
                 className="remove_tags"
-                onClick={() => removeTagHandle(select)}
+                onClick={() => removeTagHandle(select.value)}
               />
             )}
           </span>
@@ -112,7 +114,7 @@ const MultiSelect = ({
             onClick={inputClickHandle}
           />
         ) : (
-          <span className="default_select">{selected}</span>
+          <span className="default_select">{selected.label}</span>
         )}
         <Icons.TbChevronDown className="chevron_down" />
         {selected.length !== 0 ? (
@@ -121,14 +123,14 @@ const MultiSelect = ({
       </div>
       <ul className={`select_dropdown ${bool ? "active" : ""}`}>
         {filteredOptions.map((option, key) => {
-          const isOptionSelected = selected.includes(option.label);
+          const isOptionSelected = selected?.map(item=> item.value).includes(option.value);
           return (
             <li
               key={key}
               className={`select_dropdown_item ${
                 isOptionSelected ? "disabled" : ""
               }`}
-              onClick={() => !isOptionSelected && selectedHandle(option.label)}
+              onClick={() => !isOptionSelected && selectedHandle(option)}
             >
               <button>{option.label}</button>
             </li>

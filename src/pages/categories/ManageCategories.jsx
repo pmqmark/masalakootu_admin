@@ -15,7 +15,8 @@ import Pagination from "../../components/common/Pagination.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
-import { categoryRoute } from "../../lib/endPoints.js";
+import { categoryRoute, getAllProducts } from "../../lib/endPoints.js";
+import { toast } from "sonner";
 
 const ManageCategories = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -36,10 +37,10 @@ const ManageCategories = () => {
   const [fields, setCategories] = useState({
     name: "",
     description: "",
-    parentCategoryValue: "",
-    status: "",
-    isFeatured: false
+    productIds: [],
   });
+
+  const [products, setProducts] = useState([])
 
   const handleInputChange = (key, value) => {
     setCategories({
@@ -63,15 +64,12 @@ const ManageCategories = () => {
     { "value": "pause", "label": "pause" }
   ]
 
-  const parentCategories = Categories.map(category => ({
-    value: category.name,
-    label: category.name
-  }))
 
-  const selectParentCategory = (selectedOption) => {
+  const selectProducts = (selectedOptions) => {
+    console.log({ selectedOptions })
     setCategories({
       ...fields,
-      parentCategoryValue: selectedOption.label,
+      productIds: selectedOptions,
     });
   };
 
@@ -139,7 +137,7 @@ const ManageCategories = () => {
     }
   };
 
-  const getCat = async () => {
+  const getCats = async () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(`${categoryRoute}/all`);
@@ -152,9 +150,63 @@ const ManageCategories = () => {
     }
   }
 
+  const getProducts = async () => {
+    setLoading(true)
+    try {
+      const res = await axiosPrivate.get(getAllProducts);
+      console.log(res.data, 'get all Prods');
+
+      if (res.data.success === true) {
+        const prods = res.data.data?.result?.map(prod => ({
+          value: prod._id,
+          label: prod.name
+        }))
+
+        console.log({ prods })
+
+        setProducts(prods)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    getCat()
+    getCats()
+    getProducts()
   }, [])
+
+  console.log({ products })
+
+
+  const refresh = async()=>{
+    try {
+      setCategories({
+        name: "",
+        description: "",
+        productIds: [],
+      })
+
+      await getCats()
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const submitHandler = async () => {
+    try {
+      const res = await axiosPrivate.post(categoryRoute, fields)
+      if (res.data.success === true) {
+        toast.success("New Category added")
+        await refresh()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <section className="categories">
@@ -179,23 +231,25 @@ const ManageCategories = () => {
                 <Textarea
                   type="text"
                   placeholder="Description"
-                  label="Name"
+                  label="Description"
                   value={fields.description}
                   onChange={(value) => handleInputChange("description", value)}
                 />
               </div>
               <Divider />
+
               <div className="column">
                 <MultiSelect
-                  label="Select Parent Category"
-                  placeholder="Select Parent Category"
-                  onClick={selectParentCategory}
-                  isMulti={false}
-                  options={parentCategories}
-                  isSelected={fields.parentCategoryValue}
+                  label="Select Products"
+                  placeholder="Select Products"
+                  onChange={selectProducts}
+                  isMulti={true}
+                  options={products}
+                  isSelected={null}
                 />
               </div>
-              <div className="column">
+
+              {/* <div className="column">
                 <Dropdown
                   label="Status"
                   placeholder="Select Status"
@@ -203,14 +257,16 @@ const ManageCategories = () => {
                   options={statusOptions}
                   selectedValue={fields.status}
                 />
-              </div>
-              <div className="column">
+              </div> */}
+
+              {/* <div className="column">
                 <Toggler
                   label="Is featured?"
                   checked={fields.isFeatured}
                   onChange={handleFeaturedChange}
                 />
-              </div>
+              </div> */}
+
               <Divider />
               <Button
                 label="Discard"
@@ -218,6 +274,7 @@ const ManageCategories = () => {
               />
               <Button
                 label="save"
+                onClick={submitHandler}
               />
             </div>
           </div>
@@ -285,9 +342,9 @@ const ManageCategories = () => {
                               <Badge
                                 label={`Archived`}
                                 className="light-danger"
-                                />
-                              ) :  (
-                                <Badge
+                              />
+                            ) : (
+                              <Badge
                                 label={`Active`}
                                 className="light-success"
                               />
