@@ -15,3 +15,5 @@ export const loginAuth = "auth/login";
 export const getAllProducts = "products/all";
 
 export const categoryRoute = "categories"
+
+export const orderRoute = "orders"
