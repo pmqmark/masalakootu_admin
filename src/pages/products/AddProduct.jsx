@@ -21,25 +21,25 @@ import FileUpload from "../../components/common/FileUpload.jsx";
 import TextEditor from "../../components/common/TextEditor.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import { productRoute } from "../../lib/endPoints.js";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import _ from 'lodash';
 
 const AddProduct = ({ productData }) => {
-  const [product, setProduct] = useState({
-    name: "",
-    description: "",
-    sku: "",
-    priceSale: "",
-    price: "",
-    costPerItem: "",
-    profit: "",
-    margin: "",
-    barcode: "",
-    quantity: "",
-    question: "",
-    answer: "",
-    metaLink: "http://localhost:5173/catalog/product",
-    metaTitle: "",
-    metaDescription: "",
-  });
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+
+  const initialState = {
+    name: "", description: "", brand: "", price: 0,
+    thumbnail: null, images: [], stock: 0,
+    variations: [], tags: []
+  }
+
+  const clonedState = _.cloneDeep(initialState);
+
+  const [product, setProduct] = useState(clonedState);
 
   const [selectOptions, setSelectOptions] = useState([
     {
@@ -69,15 +69,15 @@ const AddProduct = ({ productData }) => {
     });
   };
 
-  useEffect(() => {
-    const profit = product.price - product.costPerItem;
-    const margin = profit / product.price * 100;
-    setProduct({
-      ...product,
-      profit: profit,
-      margin: margin ? margin : '',
-    });
-  }, [product.price,product.costPerItem])
+  // useEffect(() => {
+  //   const profit = product.price - product.costPerItem;
+  //   const margin = profit / product.price * 100;
+  //   setProduct({
+  //     ...product,
+  //     profit: profit,
+  //     margin: margin ? margin : '',
+  //   });
+  // }, [product.price, product.costPerItem])
 
   const handleStockSelect = (selectedOption) => {
     setSelectedValue({
@@ -189,6 +189,34 @@ const AddProduct = ({ productData }) => {
     }
   };
 
+  console.log({ product })
+  console.log({ initialState })
+
+  const submitHandler = async () => {
+    try {
+      const response = await axiosPrivate.post(productRoute, product)
+      const data = response?.data;
+
+      if (data?.success === true) {
+        toast.success("New Product Added")
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const saveAndExit = async () => {
+    await submitHandler()
+    navigate("/catalog/product/manage")
+  }
+
+  const saveProduct = async () => {
+    await submitHandler()
+    const clonedState = _.cloneDeep(initialState);
+    setProduct(clonedState)
+  }
+
   return (
     <section>
       <div className="container">
@@ -213,15 +241,20 @@ const AddProduct = ({ productData }) => {
                   value={product.description}
                   onChange={(value) => handleInputChange("description", value)}
                 />
-              </div>  
+              </div>
             </div>
             <div className="content_item">
-            <h2 className="sub_heading">Product Images</h2>
-              <FileUpload/>
+              <h2 className="sub_heading">Product Images</h2>
+              <FileUpload
+                uploadedFiles={product?.images}
+                setUploadedFiles={(val) => setProduct((prev) => ({ ...prev, images: val }))}
+              // setUploadedFiles={(val) => console.log({val})}
+              />
             </div>
-            <div className="content_item">
+
+            {/* <div className="content_item">
               <h2 className="sub_heading">Pricing</h2>
-              {/*<div className="column_2">
+              <div className="column_2">
                 <Input
                   type="text"
                   placeholder="Enter the product SKU"
@@ -230,7 +263,7 @@ const AddProduct = ({ productData }) => {
                   value={product.sku}
                   onChange={(value) => handleInputChange("sku", value)}
                 />
-              </div>*/}
+              </div>
               <div className="column_2">
                 <Input
                   type="number"
@@ -241,6 +274,7 @@ const AddProduct = ({ productData }) => {
                   onChange={(value) => handleInputChange("price", value)}
                 />
               </div>
+
               <div className="column_2">
                 <Input
                   type="number"
@@ -251,6 +285,7 @@ const AddProduct = ({ productData }) => {
                   onChange={(value) => handleInputChange("priceSale", value)}
                 />
               </div>
+
               <div className="column_3">
                 <Input
                   type="number"
@@ -261,6 +296,7 @@ const AddProduct = ({ productData }) => {
                   onChange={(value) => handleInputChange("costPerItem", value)}
                 />
               </div>
+
               <div className="column_3">
                 <Input
                   type="number"
@@ -270,6 +306,7 @@ const AddProduct = ({ productData }) => {
                   value={product.profit}
                 />
               </div>
+
               <div className="column_3">
                 <Input
                   type="text"
@@ -279,7 +316,8 @@ const AddProduct = ({ productData }) => {
                   value={`${product.margin ? product.margin.toFixed(2) : "- -"}%`}
                 />
               </div>
-              {/*<div className="column_3">
+
+              <div className="column_3">
                 <Input
                   type="text"
                   placeholder="Enter Barcode"
@@ -288,11 +326,13 @@ const AddProduct = ({ productData }) => {
                   value={product.barcode}
                   onChange={(value) => handleInputChange("barcode", value)}
                 />
-              </div>*/}
-            </div>
-            <div className="content_item">
+              </div>
+
+            </div> */}
+
+            {/* <div className="content_item">
               <h2 className="sub_heading">
-                <span>Variantions</span>
+                <span>Variations</span>
                 <Button
                   label="add Variant"
                   icon={<Icons.TbPlus />}
@@ -305,7 +345,7 @@ const AddProduct = ({ productData }) => {
                 <thead>
                   <tr>
                     <th>Variant</th>
-                    {Attributes.map((attribute,key) => (
+                    {Attributes.map((attribute, key) => (
                       <th key={key}>{attribute.name}</th>
                     ))}
                     <th>Price</th>
@@ -313,7 +353,7 @@ const AddProduct = ({ productData }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Variations.map((variation,key) => (
+                  {Variations.map((variation, key) => (
                     <tr key={key}>
                       <td>{getAttributesString(variation.attributes)}</td>
                       {Attributes.map((attribute) => (
@@ -325,13 +365,13 @@ const AddProduct = ({ productData }) => {
                       ))}
                       <td>${variation.price.toFixed(2)}</td>
                       <td className="td_action">
-                          <TableAction
-                            actionItems={actionItems}
-                            onActionItemClick={(item) =>
-                              handleActionItemClick(item, product.id)
-                            }
-                          />
-                        </td>
+                        <TableAction
+                          actionItems={actionItems}
+                          onActionItemClick={(item) =>
+                            handleActionItemClick(item, product.id)
+                          }
+                        />
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -350,9 +390,9 @@ const AddProduct = ({ productData }) => {
                         placeholder="Enter the product Price"
                         className="sm"
                         label="Color"
-                        icon={<Icons.TbTrash className="trash"/>}
+                        icon={<Icons.TbTrash className="trash" />}
                         value="Black"
-                        // onChange={(value) => handleInputChange("price", value)}
+                      // onChange={(value) => handleInputChange("price", value)}
                       />
                     </div>
                     <div className="column_3">
@@ -361,9 +401,9 @@ const AddProduct = ({ productData }) => {
                         placeholder="Enter the product Price sale"
                         className="sm"
                         label="Size"
-                        icon={<Icons.TbTrash className="trash"/>}
+                        icon={<Icons.TbTrash className="trash" />}
                         value="Medium"
-                        // onChange={(value) => handleInputChange("priceSale", value)}
+                      // onChange={(value) => handleInputChange("priceSale", value)}
                       />
                     </div>
                     <div className="column_3">
@@ -372,9 +412,9 @@ const AddProduct = ({ productData }) => {
                         placeholder="Enter the product Price sale"
                         className="sm"
                         label="Material"
-                        icon={<Icons.TbTrash className="trash"/>}
+                        icon={<Icons.TbTrash className="trash" />}
                         value="Polyester"
-                        // onChange={(value) => handleInputChange("priceSale", value)}
+                      // onChange={(value) => handleInputChange("priceSale", value)}
                       />
                     </div>
                   </div>
@@ -386,8 +426,8 @@ const AddProduct = ({ productData }) => {
                         placeholder="Enter the product Price"
                         className="sm"
                         label="Variant Price"
-                        // value={product.price}
-                        // onChange={(value) => handleInputChange("price", value)}
+                      // value={product.price}
+                      // onChange={(value) => handleInputChange("price", value)}
                       />
                     </div>
                     <div className="column_2">
@@ -396,8 +436,8 @@ const AddProduct = ({ productData }) => {
                         placeholder="Enter the product Price sale"
                         className="sm"
                         label="Variant Price sale"
-                        // value={product.priceSale}
-                        // onChange={(value) => handleInputChange("priceSale", value)}
+                      // value={product.priceSale}
+                      // onChange={(value) => handleInputChange("priceSale", value)}
                       />
                     </div>
                     <div className="column_3">
@@ -406,8 +446,8 @@ const AddProduct = ({ productData }) => {
                         placeholder="Cost Per Item"
                         className="sm"
                         label="Variant Cost Per Item"
-                        // value={product.costPerItem}
-                        // onChange={(value) => handleInputChange("costPerItem", value)}
+                      // value={product.costPerItem}
+                      // onChange={(value) => handleInputChange("costPerItem", value)}
                       />
                     </div>
                     <div className="column_3">
@@ -451,32 +491,32 @@ const AddProduct = ({ productData }) => {
                   <h2>add variation</h2>
                 </div>
                 <div className="modal-body">
-                  
-                    <div className="content_item">
-                      <div className="column">
-                        <Dropdown
-                          placeholder="select attribute"
-                          label="Select attribute"
-                          selectedValue={selectedValue.attribute}
-                          onClick={handleAttributeSelect}
-                          options={attributeOption}
-                          className="sm"
-                        />
-                      </div>
-                      <Divider label={`${selectedValue.attribute} options`}>
-                        <Button label="add option" className="right text" />
-                      </Divider>
-                      <div className="column">
-                        <Input
-                          type="text"
-                          icon={<Icons.TbTrash className="trash" />}
-                          placeholder="Enter the product option"
-                          className="sm"
-                          // value={product.sku}
-                          // onChange={(value) => handleInputChange("sku", value)}
-                        />
-                      </div>
+
+                  <div className="content_item">
+                    <div className="column">
+                      <Dropdown
+                        placeholder="select attribute"
+                        label="Select attribute"
+                        selectedValue={selectedValue.attribute}
+                        onClick={handleAttributeSelect}
+                        options={attributeOption}
+                        className="sm"
+                      />
                     </div>
+                    <Divider label={`${selectedValue.attribute} options`}>
+                      <Button label="add option" className="right text" />
+                    </Divider>
+                    <div className="column">
+                      <Input
+                        type="text"
+                        icon={<Icons.TbTrash className="trash" />}
+                        placeholder="Enter the product option"
+                        className="sm"
+                      // value={product.sku}
+                      // onChange={(value) => handleInputChange("sku", value)}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="modal-footer">
                   <Button
@@ -491,8 +531,9 @@ const AddProduct = ({ productData }) => {
                   />
                 </div>
               </Modal>
-            </div>
-            <div className="content_item">
+            </div> */}
+
+            {/* <div className="content_item">
               <h2 className="sub_heading">Add Question</h2>
               <div className="column">
                 <Input
@@ -521,8 +562,9 @@ const AddProduct = ({ productData }) => {
                 className="sm right"
                 onClick={handleFaqQuestion}
               />
-            </div>
-            {!faqs.length == 0 ? (
+            </div> */}
+
+            {/* {!faqs.length == 0 ? (
               <div className="content_item">
                 <h2 className="sub_heading">FAQ's</h2>
                 {faqs.map((faq, key) => {
@@ -537,8 +579,9 @@ const AddProduct = ({ productData }) => {
               </div>
             ) : (
               ""
-            )}
-            <div className="content_item meta_data">
+            )} */}
+
+            {/* <div className="content_item meta_data">
               <div className="column">
                 <span>Search engine listing</span>
                 <h2 className="meta_title">{product.metaTitle || product.name}</h2>
@@ -572,7 +615,8 @@ const AddProduct = ({ productData }) => {
                   onChange={(value) => handleInputChange("metaDescription", value)}
                 />
               </div>
-            </div>
+            </div> */}
+
           </div>
           <div className="sidebar">
             <div className="sidebar_item">
@@ -581,14 +625,19 @@ const AddProduct = ({ productData }) => {
                 label="save & exit"
                 icon={<Icons.TbDeviceFloppy />}
                 className=""
+                onClick={saveAndExit}
               />
-              <Button
+
+              {/* <Button
                 label="save"
                 icon={<Icons.TbCircleCheck />}
                 className="success"
-              />
+                onClick={saveProduct}
+              /> */}
+
             </div>
-            <div className="sidebar_item">
+
+            {/* <div className="sidebar_item">
               <h2 className="sub_heading">Stock status</h2>
               <div className="column">
                 <Dropdown
@@ -599,8 +648,9 @@ const AddProduct = ({ productData }) => {
                   className="sm"
                 />
               </div>
-            </div>
-            <div className="sidebar_item">
+            </div> */}
+
+            {/* <div className="sidebar_item">
               <h2 className="sub_heading">Categories</h2>
               <MultiSelect
                 className="sm"
@@ -608,22 +658,39 @@ const AddProduct = ({ productData }) => {
                 options={category}
                 placeholder="Select options..."
               />
-            </div>
+            </div> */}
+
             <div className="sidebar_item">
               <h2 className="sub_heading">
-                <span>quantity</span>
+                <span>Price</span>
+              </h2>
+              <div className="column">
+                <Input
+                  type="number"
+                  placeholder="Enter the price"
+                  value={product.price}
+                  onChange={(value) => handleInputChange("price", parseFloat(value))}
+                  className="sm"
+                />
+              </div>
+            </div>
+
+            <div className="sidebar_item">
+              <h2 className="sub_heading">
+                <span>stock</span>
               </h2>
               <div className="column">
                 <Input
                   type="number"
                   placeholder="Enter the product quantity"
-                  value={product.quantity}
-                  onChange={(value) => handleInputChange("quantity", value)}
+                  value={product.stock}
+                  onChange={(value) => handleInputChange("stock", parseInt(value))}
                   className="sm"
                 />
               </div>
             </div>
-            <div className="sidebar_item">
+
+            {/* <div className="sidebar_item">
               <h2 className="sub_heading">Taxes</h2>
               <div className="sidebar_checkboxes">
                 {taxes.map((tax) => (
@@ -636,8 +703,9 @@ const AddProduct = ({ productData }) => {
                   />
                 ))}
               </div>
-            </div>
-            <div className="sidebar_item">
+            </div> */}
+
+            {/* <div className="sidebar_item">
               <h2 className="sub_heading">Product collections</h2>
               <div className="sidebar_checkboxes">
                 {colloctions.map((collection) => (
@@ -652,8 +720,9 @@ const AddProduct = ({ productData }) => {
                   />
                 ))}
               </div>
-            </div>
-            <div className="sidebar_item">
+            </div> */}
+
+            {/* <div className="sidebar_item">
               <h2 className="sub_heading">Labels</h2>
               <div className="sidebar_checkboxes">
                 {labels.map((label) => (
@@ -668,13 +737,17 @@ const AddProduct = ({ productData }) => {
                   />
                 ))}
               </div>
-            </div>
+            </div> */}
+
             <div className="sidebar_item">
               <h2 className="sub_heading">tags</h2>
               <Tagify
                 tagsData={Tags}
+                tags={product.tags}
+                setTags={(val) => setProduct((prev) => ({ ...prev, tags: val }))}
               />
             </div>
+
           </div>
         </div>
       </div>

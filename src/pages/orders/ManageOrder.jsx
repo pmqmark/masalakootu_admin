@@ -167,12 +167,12 @@ const ManageOrders = () => {
                           </td>
                           <td className="td_id">{order._id}</td>
                           <td>
-                            <Link to={`/customers/manage/${order.userId._id}`}>
+                            <Link to={`/customers/manage/${order.userId?._id}`}>
                               {`${order?.userId?.firstName ?? ""} ${order?.userId?.lastName ?? ""}`}
                             </Link>
                           </td>
-                          <td>{order.userId.email}</td>
-                          <td>{order.userId.mobile}</td>
+                          <td>{order.userId?.email}</td>
+                          <td>{order.userId?.mobile}</td>
                           <td> ₹{order.amount}</td>
                           <td> ₹{order.deliveryCharge}</td>
                           <td>{order.payMode}</td>
