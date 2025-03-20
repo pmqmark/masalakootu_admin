@@ -1,7 +1,7 @@
 import * as Icons from "react-icons/tb";
 import Input from '../common/Input.jsx';
 import Profile from '../common/Profile.jsx';
-import ProfileImg from '../../../public/dummy.jpg';
+import ProfileImg from '../../../public/logoFav.png';
 import { useSelector } from "react-redux";
 
 const Navbar = () => {
