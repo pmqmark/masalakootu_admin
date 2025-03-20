@@ -1,15 +1,11 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import * as Icons from "react-icons/tb";
 import Input from '../common/Input.jsx';
 import Profile from '../common/Profile.jsx';
 import ProfileImg from '../../images/users/user_3.webp';
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const [user] = useState({
-    username: "Your Username",
-    email: "your@email.com", // Replace with your user data
-  });
+  const user = useSelector((state)=> state.authentication.user)
 
   return (
     <div className="navbar">
@@ -22,7 +18,7 @@ const Navbar = () => {
               className="navbar_search"
             />
             <div className="navbar_icons">
-              <Link className="navbar_icon">
+              {/* <Link className="navbar_icon">
                 <Icons.TbLayoutGrid />
               </Link>
               <Link className="navbar_icon">
@@ -33,9 +29,9 @@ const Navbar = () => {
               </Link>
               <Link className="navbar_icon">
                 <Icons.TbSunHigh />
-              </Link>
+              </Link> */}
               <Profile
-                name={user.username}
+                name={user.firstName}
                 slogan={user.email}
                 className="admin_profile"
                 src={ProfileImg}
