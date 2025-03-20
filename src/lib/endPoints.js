@@ -13,3 +13,13 @@ export const loginAuth = "auth/login";
 
 // Products
 export const getAllProducts = "products/all";
+
+export const categoryRoute = "categories"
+
+export const orderRoute = "orders"
+
+export const usersRoute = "users"
+
+export const uploadMultiFilesRoute = "uploads/multiple"
+
+export const productRoute = "products"

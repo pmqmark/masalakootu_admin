@@ -14,9 +14,15 @@ import Thumbnail from "../../components/common/Thumbnail.jsx";
 import Pagination from "../../components/common/Pagination.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import { categoryRoute, getAllProducts } from "../../lib/endPoints.js";
+import { toast } from "sonner";
 
 const ManageCategories = () => {
+  const axiosPrivate = useAxiosPrivate();
   const categories = Categories;
+  const [isLoading, setLoading] = useState(false)
+  const [cats, setCats] = useState([])
   const navigate = useNavigate();
   const [bulkCheck, setBulkCheck] = useState(false);
   const [specificChecks, setSpecificChecks] = useState({});
@@ -31,10 +37,10 @@ const ManageCategories = () => {
   const [fields, setCategories] = useState({
     name: "",
     description: "",
-    parentCategoryValue: "",
-    status: "",
-    isFeatured: false
+    productIds: [],
   });
+
+  const [products, setProducts] = useState([])
 
   const handleInputChange = (key, value) => {
     setCategories({
@@ -58,15 +64,12 @@ const ManageCategories = () => {
     { "value": "pause", "label": "pause" }
   ]
 
-  const parentCategories = Categories.map(category=>({
-    value: category.name,
-    label: category.name
-  }))
 
-  const selectParentCategory = (selectedOption) => {
+  const selectProducts = (selectedOptions) => {
+    console.log({ selectedOptions })
     setCategories({
       ...fields,
-      parentCategoryValue: selectedOption.label,
+      productIds: selectedOptions,
     });
   };
 
@@ -122,17 +125,88 @@ const ManageCategories = () => {
     });
   };
 
-    const actionItems = ["Delete", "edit"];
+  const actionItems = ["Delete", "edit"];
 
-  const handleActionItemClick = (item,itemID) => {
-    var updateItem = item.toLowerCase()
+  const handleActionItemClick = (item, itemID) => {
+    var updateItem = item?.toLowerCase()
     if (updateItem === "delete") {
       alert(`#${itemID} item delete`)
     }
-    else if(updateItem === "edit"){
+    else if (updateItem === "edit") {
       navigate(`/catalog/categories/manage/${itemID}`)
     }
   };
+
+  const getCats = async () => {
+    setLoading(true)
+    try {
+      const res = await axiosPrivate.get(`${categoryRoute}/all`);
+      console.log(res.data, 'get all Cats');
+      setCats(res?.data?.data?.result)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getProducts = async () => {
+    setLoading(true)
+    try {
+      const res = await axiosPrivate.get(getAllProducts);
+      console.log(res.data, 'get all Prods');
+
+      if (res.data.success === true) {
+        const prods = res.data.data?.result?.map(prod => ({
+          value: prod._id,
+          label: prod.name
+        }))
+
+        console.log({ prods })
+
+        setProducts(prods)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getCats()
+    getProducts()
+  }, [])
+
+  console.log({ products })
+
+
+  const refresh = async()=>{
+    try {
+      setCategories({
+        name: "",
+        description: "",
+        productIds: [],
+      })
+
+      await getCats()
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const submitHandler = async () => {
+    try {
+      const res = await axiosPrivate.post(categoryRoute, fields)
+      if (res.data.success === true) {
+        toast.success("New Category added")
+        await refresh()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <section className="categories">
@@ -142,7 +216,7 @@ const ManageCategories = () => {
             <div className="sidebar_item">
               <h2 className="sub_heading">add category</h2>
               <div className="column">
-                <Thumbnail/>
+                <Thumbnail />
               </div>
               <div className="column">
                 <Input
@@ -157,23 +231,25 @@ const ManageCategories = () => {
                 <Textarea
                   type="text"
                   placeholder="Description"
-                  label="Name"
+                  label="Description"
                   value={fields.description}
                   onChange={(value) => handleInputChange("description", value)}
                 />
               </div>
-              <Divider/>
+              <Divider />
+
               <div className="column">
                 <MultiSelect
-                  label="Select Parent Category"
-                  placeholder="Select Parent Category"
-                  onClick={selectParentCategory}
-                  isMulti={false}
-                  options={parentCategories}
-                  isSelected={fields.parentCategoryValue}
+                  label="Select Products"
+                  placeholder="Select Products"
+                  onChange={selectProducts}
+                  isMulti={true}
+                  options={products}
+                  isSelected={null}
                 />
               </div>
-              <div className="column">
+
+              {/* <div className="column">
                 <Dropdown
                   label="Status"
                   placeholder="Select Status"
@@ -181,21 +257,24 @@ const ManageCategories = () => {
                   options={statusOptions}
                   selectedValue={fields.status}
                 />
-              </div>
-              <div className="column">
+              </div> */}
+
+              {/* <div className="column">
                 <Toggler
                   label="Is featured?"
                   checked={fields.isFeatured}
                   onChange={handleFeaturedChange}
                 />
-              </div>
-              <Divider/>
+              </div> */}
+
+              <Divider />
               <Button
                 label="Discard"
                 className="right outline"
               />
               <Button
                 label="save"
+                onClick={submitHandler}
               />
             </div>
           </div>
@@ -232,14 +311,14 @@ const ManageCategories = () => {
                       <th className="td_id">id</th>
                       <th className="td_image">image</th>
                       <th>name</th>
-                      <th className="td_order">order</th>
+                      <th className="td_order">Description</th>
                       <th className="td_status">status</th>
                       <th>created at</th>
                       <th className="td_action">actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {categories.map((category, key) => {
+                    {cats.map((category, key) => {
                       return (
                         <tr key={key}>
                           <td className="td_checkbox">
@@ -250,48 +329,28 @@ const ManageCategories = () => {
                               isChecked={specificChecks[category.id] || false}
                             />
                           </td>
-                          <td className="td_id">{category.id}</td>
+                          <td className="td_id">{category._id}</td>
                           <td className="td_image">
-                            <img src={category.image} alt={category.name} />
+                            <img src={category.image?.location} alt={category.image?.name} />
                           </td>
                           <td>
-                            <Link to={category.id}>{category.name}</Link>
+                            <Link to={category._id}>{category.name}</Link>
                           </td>
-                          <td className="td_order">{category.order}</td>
+                          <td className="td_order">{category.description}</td>
                           <td className="td_status">
-                            {category.status.toLowerCase() === "active" ||
-                             category.status.toLowerCase() === "completed" ||
-                             category.status.toLowerCase() === "new" ||
-                             category.status.toLowerCase() === "coming soon" ? (
-                               <Badge
-                                 label={category.status}
-                                 className="light-success"
-                               />
-                             ) : category.status.toLowerCase() === "inactive" ||
-                               category.status.toLowerCase() === "out of stock" ||
-                               category.status.toLowerCase() === "discontinued" ? (
-                               <Badge
-                                 label={category.status}
-                                 className="light-danger"
-                               />
-                             ) : category.status.toLowerCase() === "on sale" ||
-                                 category.status.toLowerCase() === "featured" ||
-                                 category.status.toLowerCase() === "pending" ? (
-                               <Badge
-                                 label={category.status}
-                                 className="light-warning"
-                               />
-                             ) : category.status.toLowerCase() === "archive" ||
-                                 category.status.toLowerCase() === "pause" ? (
-                               <Badge
-                                 label={category.status}
-                                 className="light-secondary"
-                               />
-                             ) : (
-                               ""
-                             )}
+                            {category.isArchived ? (
+                              <Badge
+                                label={`Archived`}
+                                className="light-danger"
+                              />
+                            ) : (
+                              <Badge
+                                label={`Active`}
+                                className="light-success"
+                              />
+                            )}
                           </td>
-                          <td>{category.start_date}</td>
+                          <td>{category.createdAt ?? 'NIL'}</td>
                           <td className="td_action">
                             <TableAction
                               actionItems={actionItems}

@@ -35,7 +35,7 @@ const useAxiosPrivate = () => {
         if (error?.response?.status === 401 && !prevRequest?.sent) {
           prevRequest.sent = true;
 
-          if (prevRequest.url === "/api/auth/refresh-token") {
+          if (prevRequest.url === "/api/auth/regenerate-token") {
             dispatch(setRefreshToken(null));
             dispatch(logout());
             return;

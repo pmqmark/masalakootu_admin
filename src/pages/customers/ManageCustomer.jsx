@@ -10,8 +10,12 @@ import Dropdown from "../../components/common/Dropdown.jsx";
 import Pagination from "../../components/common/Pagination.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import SelectOption from "../../components/common/SelectOption.jsx";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import { usersRoute } from "../../lib/endPoints.js";
 
 const ManageCustomer = () => {
+  const axiosPrivate = useAxiosPrivate();
+  const [isLoading, setLoading] = useState(false)
   const [bulkCheck, setBulkCheck] = useState(false);
   const [specificChecks, setSpecificChecks] = useState({});
   const navigate = useNavigate();
@@ -24,6 +28,8 @@ const ManageCustomer = () => {
   ]);
 
   const customer = Customers;
+
+  const [customers, setCustomers] = useState([]);
 
   const bulkAction = [
     { value: "delete", label: "Delete" },
@@ -67,13 +73,30 @@ const ManageCustomer = () => {
   const actionItems = ["Delete", "edit"];
 
   const handleActionItemClick = (item, itemID) => {
-    var updateItem = item.toLowerCase();
+    var updateItem = item?.toLowerCase();
     if (updateItem === "delete") {
       alert(`#${itemID} item delete`);
     } else if (updateItem === "edit") {
       navigate(`/customers/manage/${itemID}`);
     }
   };
+
+  const getCustomers = async () => {
+    setLoading(true)
+    try {
+      const res = await axiosPrivate.get(`${usersRoute}?role=user`);
+      console.log(res.data, 'get all Customers');
+      setCustomers(res?.data?.data?.users)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getCustomers()
+  }, [])
 
 
   return (
@@ -113,75 +136,50 @@ const ManageCustomer = () => {
                         />
                       </th>
                       <th className="td_id">id</th>
-                      <th className="td_image">image</th>
                       <th colSpan="4">name</th>
                       <th>email</th>
-                      <th>orders</th>
                       <th className="td_status">status</th>
                       <th className="td_date">created at</th>
                       <th>actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {customer.map((customer, key) => {
+                    {customers?.map((customer, key) => {
                       return (
                         <tr key={key}>
                           <td className="td_checkbox">
                             <CheckBox
                               onChange={(isCheck) =>
-                                handleCheckCustomer(isCheck, customer.id)
+                                handleCheckCustomer(isCheck, customer._id)
                               }
-                              isChecked={specificChecks[customer.id] || false}
+                              isChecked={specificChecks[customer._id] || false}
                             />
                           </td>
-                          <td className="td_id">{customer.id}</td>
-                          <td className="td_image">
-                            <img
-                              src={`${customer.image}${customer.name}`}
-                              alt={customer.name}
-                            />
-                          </td>
-                          <td colSpan="4">
-                            <Link to={customer.id.toString()}>{customer.name}</Link>
-                          </td>
-                          <td>{customer.contact.email}</td>
-                          <td>{customer.purchase_history.length}</td>
-                          <td className="td_status">
-                            {customer.status.toLowerCase() === "active" ||
-                             customer.status.toLowerCase() === "completed" ||
-                             customer.status.toLowerCase() === "new" ||
-                             customer.status.toLowerCase() === "coming soon" ? (
-                               <Badge
-                                 label={customer.status}
-                                 className="light-success"
-                               />
-                             ) : customer.status.toLowerCase() === "inactive" ||
-                               customer.status.toLowerCase() === "out of stock" ||
-                               customer.status.toLowerCase() === "locked" ||
-                               customer.status.toLowerCase() === "discontinued" ? (
-                               <Badge
-                                 label={customer.status}
-                                 className="light-danger"
-                               />
-                             ) : customer.status.toLowerCase() === "on sale" ||
-                                 customer.status.toLowerCase() === "featured" ||
-                                 customer.status.toLowerCase() === "pending" ? (
-                               <Badge
-                                 label={customer.status}
-                                 className="light-warning"
-                               />
-                             ) : customer.status.toLowerCase() === "archive" ||
-                                 customer.status.toLowerCase() === "pause" ? (
-                               <Badge
-                                 label={customer.status}
-                                 className="light-secondary"
-                               />
-                             ) : (
-                               ""
-                             )}
-                          </td>
-                          <td className="td_date">{customer.createdAt}</td>
+                          <td className="td_id">{customer._id}</td>
                           
+                          <td colSpan="4">
+                            <Link to={customer.id?.toString()}>
+                              {`${customer?.firstName ?? ""} ${customer?.lastName ?? ""}`}
+                            </Link>
+                          </td>
+                          <td>{customer?.email}</td>
+                          <td className="td_status">
+                            {customer.isBlocked ? (
+                              <Badge
+                                label={`Blocked`}
+                                className="light-danger"
+                              />
+                            ) : (
+                              <Badge
+                                label={`Active`}
+                                className="light-success"
+                              />
+                            )}
+                          </td>
+                          <td className="td_date">
+                            {customer.createdAt ? new Date(customer.createdAt).toLocaleDateString('en-IN') : 'NIL'}
+                          </td>
+
                           <td className="td_action">
                             <TableAction
                               actionItems={actionItems}

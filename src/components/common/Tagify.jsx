@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as Icons from "react-icons/tb";
 
-const Tagify = ({ tagsData }) => {
-  const [tags, setTags] = useState([]);
+const Tagify = ({ tagsData, tags, setTags }) => {
+  // const [tags, setTags] = useState([]);
   const [bool, setBool] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [filteredOptions, setFilteredOptions] = useState(
