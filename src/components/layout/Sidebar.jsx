@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import{ useState } from 'react';
 import * as Icons from 'react-icons/tb';
 import { useDispatch } from 'react-redux';
-import Logo from '../../images/common/logo.svg';
 import { Link, NavLink } from 'react-router-dom';
 import navigation from '../../api/navigation.jsx';
 import {logout} from '../../store/slices/authenticationSlice.jsx';
@@ -31,7 +30,7 @@ const Sidebar = () => {
           <img src={Logo} alt="logo" />
         </Link>*/}
 
-        <h2 className="logo_text">Your Logo</h2>
+        <h2 className="logo_text">Masalakoottu</h2>
         <Link className="navbar_icon menu_sidebar" onClick={handleSidebar}>
           <Icons.TbChevronsLeft className={`${sidebar ? 'active' : ''}`} />
         </Link>

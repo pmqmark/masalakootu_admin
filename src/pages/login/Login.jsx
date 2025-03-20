@@ -45,10 +45,10 @@ const Login = () => {
     try {
       const res = await axios.post(loginAuth, formData);
       console.log(res.data);
+      toast.success(res.data.data?.message || "Login Successfully");
       dispatch(login(res.data.data.userInfo));
       dispatch(setAccessToken(res.data.data.accessToken));
       dispatch(setRefreshToken(res.data.data.refreshToken));
-      toast.success(res.data.data?.message || "Login Successfully")
     } catch (error) {
       setLoginError(true);
       console.log(error)
