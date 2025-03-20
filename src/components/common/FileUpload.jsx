@@ -64,10 +64,10 @@ const DropZone = ({uploadedFiles, setUploadedFiles}) => {
             {uploadedFiles?.map((file, key) => (
               <div key={key} className="uploaded-image-container">
                 <figure className="uploaded-image">
-                  <img src={file.location} alt={file.name} />
-                  <Button onClick={() => onDelete(file.key)} icon={<Icons.TbTrash />} className="sm" />
+                  <img src={file?.location} alt={file?.name} />
+                  <Button onClick={() => onDelete(file?.key)} icon={<Icons.TbTrash />} className="sm" />
                 </figure>
-                <span className="line_clamp">{file.name}</span>
+                <span className="line_clamp">{file?.name}</span>
               </div>
             ))}
           </div>

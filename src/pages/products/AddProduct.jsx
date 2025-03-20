@@ -243,12 +243,20 @@ const AddProduct = ({ productData }) => {
                 />
               </div>
             </div>
+
             <div className="content_item">
               <h2 className="sub_heading">Product Images</h2>
               <FileUpload
                 uploadedFiles={product?.images}
                 setUploadedFiles={(val) => setProduct((prev) => ({ ...prev, images: val }))}
-              // setUploadedFiles={(val) => console.log({val})}
+              />
+            </div>
+
+            <div className="content_item">
+              <h2 className="sub_heading">Thumbnail</h2>
+              <FileUpload
+                uploadedFiles={product?.thumbnail ? [product?.thumbnail] : []}
+                setUploadedFiles={(val) => setProduct((prev) => ({ ...prev, thumbnail: val[val?.length - 1] }))}
               />
             </div>
 
@@ -628,12 +636,12 @@ const AddProduct = ({ productData }) => {
                 onClick={saveAndExit}
               />
 
-              {/* <Button
+              <Button
                 label="save"
                 icon={<Icons.TbCircleCheck />}
                 className="success"
                 onClick={saveProduct}
-              /> */}
+              />
 
             </div>
 
