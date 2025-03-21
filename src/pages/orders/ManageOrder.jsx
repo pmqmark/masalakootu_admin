@@ -13,6 +13,7 @@ import TableAction from "../../components/common/TableAction.jsx";
 import SelectOption from "../../components/common/SelectOption.jsx";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 import { orderRoute } from "../../lib/endPoints.js";
+import TableSkeleton from "../../components/common/TableSkeleton.jsx";
 
 const ManageOrders = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -78,16 +79,6 @@ const ManageOrders = () => {
   };
 
 
-  const actionItems = ["Delete", "View", "Edit"];
-
-  const handleActionItemClick = (item, itemID) => {
-    var updateItem = item.toLowerCase();
-    if (updateItem === "delete") {
-      alert(`#${itemID} item delete`);
-    } else if (updateItem === "view") {
-      navigate(`/orders/manage/${itemID.toString()}`);
-    }
-  };
 
   const getOrders = async () => {
     setLoading(true)
@@ -105,6 +96,21 @@ const ManageOrders = () => {
   useEffect(() => {
     getOrders()
   }, [])
+
+  const actionItems = [ "View", "Edit"];
+
+  const handleActionItemClick = (item, itemID) => {
+    const selectedorder = orders.find((order) => order._id === itemID);
+
+    console.log("id for",itemID)
+    console.log("data selected ",selectedorder)
+    var updateItem = item.toLowerCase();
+    if (updateItem === "delete") {
+      alert(`#${itemID} item delete`);
+    } else if (updateItem === "view") {
+      navigate(`/orders/manage/${itemID}`);
+    }
+  };
 
   return (
     <section className="orders">
@@ -153,9 +159,12 @@ const ManageOrders = () => {
                       <th>actions</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {orders.map((order, key) => {
+                  {isLoading ? (
+                    <TableSkeleton ColumnCount={10} />
+                  ) : (
+                    orders.map((order, key) => {
                       return (
+                        <tbody>
                         <tr key={key}>
                           <td className="td_checkbox">
                             <CheckBox
@@ -165,7 +174,7 @@ const ManageOrders = () => {
                               isChecked={specificChecks[order.id] || false}
                             />
                           </td>
-                          <td className="td_id">{order._id}</td>
+                          <td className="td_id">{key +1}</td>
                           <td>
                             <Link to={`/customers/manage/${order.userId?._id}`}>
                               {`${order?.userId?.firstName ?? ""} ${order?.userId?.lastName ?? ""}`}
@@ -220,14 +229,15 @@ const ManageOrders = () => {
                             <TableAction
                               actionItems={actionItems}
                               onActionItemClick={(item) =>
-                                handleActionItemClick(item, order.id)
+                                handleActionItemClick(item, order._id)
                               }
                             />
                           </td>
                         </tr>
-                      );
-                    })}
                   </tbody>
+                      );
+                    })
+                  )}
                 </table>
               </div>
             </div>
