@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import * as Icons from "react-icons/tb";
 
 const MultiSelect = ({
@@ -17,7 +18,7 @@ const MultiSelect = ({
   const inputRef = useRef(null);
 
   const selectedHandle = (option) => {
-    const {value, label} = option;
+    const { value } = option;
     if (!isMulti) {
       setSelected([option]);
       setBool(false);
@@ -29,19 +30,22 @@ const MultiSelect = ({
       setValue("");
       setFilteredOptions(options);
     }
-    const selectedValues = selected?.map(item=> item?.value)
+    const selectedValues = selected?.map(item => item?.value)
     onChange(isMulti ? [...selectedValues, value] : [value])
   };
 
   const inputClickHandle = () => {
     setBool(!bool);
+    if (filteredOptions.length === 0) {
+      setFilteredOptions(options);
+    }
   };
 
   const changeHandler = (e) => {
     const inputValue = e.target.value;
     setValue(inputValue);
 
-    const filtered = options.filter((option) =>
+    const filtered = options?.filter((option) =>
       option.label.toLowerCase().includes(inputValue.toLowerCase())
     );
     setFilteredOptions(filtered);
@@ -121,15 +125,14 @@ const MultiSelect = ({
           <Icons.TbX className="remove_tags" onClick={clearAllHandle} />
         ) : null}
       </div>
-      <ul className={`select_dropdown ${bool ? "active" : ""}`}>
+      <ul className={`select_dropdown ${bool ? "block" : "hidden"}`}>
         {filteredOptions.map((option, key) => {
-          const isOptionSelected = selected?.map(item=> item.value).includes(option.value);
+          const isOptionSelected = selected?.map(item => item.value).includes(option.value);
           return (
             <li
               key={key}
-              className={`select_dropdown_item ${
-                isOptionSelected ? "disabled" : ""
-              }`}
+              className={`select_dropdown_item ${isOptionSelected ? "disabled" : ""
+                }`}
               onClick={() => !isOptionSelected && selectedHandle(option)}
             >
               <button>{option.label}</button>

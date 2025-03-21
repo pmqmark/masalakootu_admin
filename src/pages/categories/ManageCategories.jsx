@@ -1,42 +1,45 @@
-import * as Icons from "react-icons/tb";
-import React, { useState, useEffect } from "react";
-import Categories from "../../api/Categories.json";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input.jsx";
 import Badge from "../../components/common/Badge.jsx";
 import Button from "../../components/common/Button.jsx";
-import Toggler from "../../components/common/Toggler.jsx";
 import Divider from "../../components/common/Divider.jsx";
 import CheckBox from "../../components/common/CheckBox.jsx";
 import Textarea from "../../components/common/Textarea.jsx";
 import Dropdown from "../../components/common/Dropdown.jsx";
 import Thumbnail from "../../components/common/Thumbnail.jsx";
-import Pagination from "../../components/common/Pagination.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+// import * as Icons from "react-icons/tb";
+// import Categories from "../../api/Categories.json";
+// import Pagination from "../../components/common/Pagination.jsx";
+// import Toggler from "../../components/common/Toggler.jsx";
 import { categoryRoute, getAllProducts } from "../../lib/endPoints.js";
 import { toast } from "sonner";
 
 const ManageCategories = () => {
   const axiosPrivate = useAxiosPrivate();
-  const categories = Categories;
   const [isLoading, setLoading] = useState(false)
   const [cats, setCats] = useState([])
   const navigate = useNavigate();
   const [bulkCheck, setBulkCheck] = useState(false);
   const [specificChecks, setSpecificChecks] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedValue, setSelectedValue] = useState(5);
-  const [tableRow, setTableRow] = useState([
-    { value: 2, label: "2" },
-    { value: 5, label: "5" },
-    { value: 10, label: "10" },
-  ]);
 
+  // ------Pagination----------
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [selectedValue, setSelectedValue] = useState(5);
+  // const [tableRow, setTableRow] = useState([
+  //   { value: 2, label: "2" },
+  //   { value: 5, label: "5" },
+  //   { value: 10, label: "10" },
+  // ]);
+
+  const [cataImage, setCataImage] = useState({})
   const [fields, setCategories] = useState({
     name: "",
     description: "",
+    image: cataImage,
     productIds: [],
   });
 
@@ -63,7 +66,6 @@ const ManageCategories = () => {
     { "value": "archive", "label": "archive" },
     { "value": "pause", "label": "pause" }
   ]
-
 
   const selectProducts = (selectedOptions) => {
     console.log({ selectedOptions })
@@ -141,7 +143,6 @@ const ManageCategories = () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(`${categoryRoute}/all`);
-      console.log(res.data, 'get all Cats');
       setCats(res?.data?.data?.result)
     } catch (error) {
       console.log(error)
@@ -154,15 +155,12 @@ const ManageCategories = () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(getAllProducts);
-      console.log(res.data, 'get all Prods');
 
       if (res.data.success === true) {
         const prods = res.data.data?.result?.map(prod => ({
           value: prod._id,
           label: prod.name
         }))
-
-        console.log({ prods })
 
         setProducts(prods)
       }
@@ -178,10 +176,7 @@ const ManageCategories = () => {
     getProducts()
   }, [])
 
-  console.log({ products })
-
-
-  const refresh = async()=>{
+  const refresh = async () => {
     try {
       setCategories({
         name: "",
@@ -197,6 +192,7 @@ const ManageCategories = () => {
   }
 
   const submitHandler = async () => {
+    console.log(fields);
     try {
       const res = await axiosPrivate.post(categoryRoute, fields)
       if (res.data.success === true) {
@@ -211,18 +207,20 @@ const ManageCategories = () => {
   return (
     <section className="categories">
       <div className="container">
-        <div className="wrapper">
+        <div className="wrapper flex flex-col md:flex-row">
+          {/* category  */}
           <div className="sidebar">
             <div className="sidebar_item">
               <h2 className="sub_heading">add category</h2>
               <div className="column">
-                <Thumbnail />
+                <Thumbnail setImage={handleInputChange} />
               </div>
               <div className="column">
                 <Input
                   type="text"
                   placeholder="Enter the fields name"
                   label="Name"
+                  required
                   value={fields.name}
                   onChange={(value) => handleInputChange("name", value)}
                 />
@@ -257,9 +255,9 @@ const ManageCategories = () => {
                   options={statusOptions}
                   selectedValue={fields.status}
                 />
-              </div> */}
+              </div>
 
-              {/* <div className="column">
+              <div className="column">
                 <Toggler
                   label="Is featured?"
                   checked={fields.isFeatured}
@@ -270,16 +268,19 @@ const ManageCategories = () => {
               <Divider />
               <Button
                 label="Discard"
-                className="right outline"
+                className="right text-white border-none bg-red-500"
               />
               <Button
                 label="save"
+                className="text-white bg-green-600 border-none"
                 onClick={submitHandler}
               />
             </div>
           </div>
+
+          {/* table */}
           <div className="content transparent">
-            <div className="content_head">
+            <div className="flex justify-between w-full">
               <Dropdown
                 placeholder="Bulk Action"
                 className="sm"
@@ -290,12 +291,12 @@ const ManageCategories = () => {
                 placeholder="Search Categories..."
                 className="sm table_search"
               />
-              <div className="btn_parent">
+              {/* <div className="btn_parent">
                 <Link to="/catalog/category/add" className="sm button">
                   <Icons.TbPlus />
                   <span>Create Categories</span>
                 </Link>
-              </div>
+              </div> */}
             </div>
             <div className="content_body">
               <div className="table_responsive">
@@ -317,56 +318,58 @@ const ManageCategories = () => {
                       <th className="td_action">actions</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {cats.map((category, key) => {
-                      return (
-                        <tr key={key}>
-                          <td className="td_checkbox">
-                            <CheckBox
-                              onChange={(isCheck) =>
-                                handleCheckCategory(isCheck, category.id)
-                              }
-                              isChecked={specificChecks[category.id] || false}
-                            />
-                          </td>
-                          <td className="td_id">{category._id}</td>
-                          <td className="td_image">
-                            <img src={category.image?.location} alt={category.image?.name} />
-                          </td>
-                          <td>
-                            <Link to={category._id}>{category.name}</Link>
-                          </td>
-                          <td className="td_order">{category.description}</td>
-                          <td className="td_status">
-                            {category.isArchived ? (
-                              <Badge
-                                label={`Archived`}
-                                className="light-danger"
+                  {isLoading ? ("") : (
+                    <tbody>
+                      {cats.map((category, key) => {
+                        return (
+                          <tr key={key}>
+                            <td className="td_checkbox">
+                              <CheckBox
+                                onChange={(isCheck) =>
+                                  handleCheckCategory(isCheck, category.id)
+                                }
+                                isChecked={specificChecks[category.id] || false}
                               />
-                            ) : (
-                              <Badge
-                                label={`Active`}
-                                className="light-success"
+                            </td>
+                            <td className="td_id">{key + 1}</td>
+                            <td className="td_image">
+                              <img src={category?.image?.location || "/public/dummy.jpg"} alt={category.image?.name} />
+                            </td>
+                            <td>
+                              <Link to={category._id}>{category.name}</Link>
+                            </td>
+                            <td className="td_order truncate max-w-[200px]">{category.description}</td>
+                            <td className="td_status">
+                              {category.isArchived ? (
+                                <Badge
+                                  label={`Archived`}
+                                  className="light-danger"
+                                />
+                              ) : (
+                                <Badge
+                                  label={`Active`}
+                                  className="light-success"
+                                />
+                              )}
+                            </td>
+                            <td>{category.createdAt?.split('T')[0] ?? 'NIL'}</td>
+                            <td className="td_action">
+                              <TableAction
+                                actionItems={actionItems}
+                                onActionItemClick={(item) =>
+                                  handleActionItemClick(item, category.id)
+                                }
                               />
-                            )}
-                          </td>
-                          <td>{category.createdAt ?? 'NIL'}</td>
-                          <td className="td_action">
-                            <TableAction
-                              actionItems={actionItems}
-                              onActionItemClick={(item) =>
-                                handleActionItemClick(item, category.id)
-                              }
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  )}
                 </table>
               </div>
             </div>
-            <div className="content_footer">
+            {/* <div className="content_footer">
               <Dropdown
                 className="top show_rows sm"
                 placeholder="please select"
@@ -379,7 +382,7 @@ const ManageCategories = () => {
                 totalPages={5}
                 onPageChange={onPageChange}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

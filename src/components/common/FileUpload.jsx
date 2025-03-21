@@ -5,7 +5,7 @@ import Button from "./Button.jsx";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js"
 import { uploadMultiFilesRoute } from '../../lib/endPoints.js';
 
-const DropZone = ({uploadedFiles, setUploadedFiles}) => {
+const DropZone = ({ uploadedFiles, setUploadedFiles }) => {
   const axiosPrivate = useAxiosPrivate()
   // const [uploadedFiles, setUploadedFiles] = useState([]);
 
@@ -22,12 +22,12 @@ const DropZone = ({uploadedFiles, setUploadedFiles}) => {
     })
 
     try {
-      const response = await axiosPrivate.post(uploadMultiFilesRoute, formData , {
+      const response = await axiosPrivate.post(uploadMultiFilesRoute, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }
-  )
+      )
       const data = response?.data;
 
       if (data?.success === true && data?.data?.files?.length > 0) {
@@ -42,15 +42,15 @@ const DropZone = ({uploadedFiles, setUploadedFiles}) => {
 
   const onDelete = key => {
     const filtered = uploadedFiles?.filter(file => file.key !== key)
-    console.log({filtered})
+    console.log({ filtered })
     setUploadedFiles(filtered);
   };
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  console.log({getRootProps:{...getRootProps()}, getInputProps: {...getInputProps()}})
+  console.log({ getRootProps: { ...getRootProps() }, getInputProps: { ...getInputProps() } })
 
-  console.log({uploadedFiles})
+  console.log({ uploadedFiles })
 
   return (
     <div className="drop-zone-container">
