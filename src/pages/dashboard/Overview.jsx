@@ -115,7 +115,7 @@ const Overview = () => {
 							</h2>
 							<Area/>
 						</div>
-						<div className="content_item">
+						{/* <div className="content_item">
 							<h2 className="sub_heading">Best selling products</h2>
 							<table className="simple">
 								<thead>
@@ -163,7 +163,7 @@ const Overview = () => {
 									))}
 								</tbody>
 							</table>
-						</div>
+						</div> */}
 					</div>
 					<div className="sidebar">
 						{/* <div className="sidebar_item">
