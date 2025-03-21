@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Input from "../../components/common/Input.jsx";
 import Badge from "../../components/common/Badge.jsx";
 import Button from "../../components/common/Button.jsx";
@@ -24,7 +24,6 @@ const ManageCategories = () => {
   const axiosPrivate = useAxiosPrivate();
   const [isLoading, setLoading] = useState(false)
   const [cats, setCats] = useState([])
-  const navigate = useNavigate();
   const [bulkCheck, setBulkCheck] = useState(false);
   const [specificChecks, setSpecificChecks] = useState({});
   // edit category
@@ -32,6 +31,7 @@ const ManageCategories = () => {
   const [selectedItemID, setSelectedItemID] = useState(null);
 
   // ------Pagination----------
+  // const navigate = useNavigate();
   // const [currentPage, setCurrentPage] = useState(1);
   // const [selectedValue, setSelectedValue] = useState(5);
   // const [tableRow, setTableRow] = useState([
@@ -40,7 +40,7 @@ const ManageCategories = () => {
   //   { value: 10, label: "10" },
   // ]);
 
-  const [cataImage, setCataImage] = useState({})
+  const [cataImage] = useState({})
   const [fields, setCategories] = useState({
     name: "",
     description: "",
@@ -58,20 +58,20 @@ const ManageCategories = () => {
     });
   };
 
-  const statusOptions = [
-    { "value": "active", "label": "active" },
-    { "value": "completed", "label": "completed" },
-    { "value": "new", "label": "new" },
-    { "value": "coming soon", "label": "coming soon" },
-    { "value": "inactive", "label": "inactive" },
-    { "value": "out of stock", "label": "out of stock" },
-    { "value": "discontinued", "label": "discontinued" },
-    { "value": "on sale", "label": "on sale" },
-    { "value": "featured", "label": "featured" },
-    { "value": "pending", "label": "pending" },
-    { "value": "archive", "label": "archive" },
-    { "value": "pause", "label": "pause" }
-  ]
+  // const statusOptions = [
+  //   { "value": "active", "label": "active" },
+  //   { "value": "completed", "label": "completed" },
+  //   { "value": "new", "label": "new" },
+  //   { "value": "coming soon", "label": "coming soon" },
+  //   { "value": "inactive", "label": "inactive" },
+  //   { "value": "out of stock", "label": "out of stock" },
+  //   { "value": "discontinued", "label": "discontinued" },
+  //   { "value": "on sale", "label": "on sale" },
+  //   { "value": "featured", "label": "featured" },
+  //   { "value": "pending", "label": "pending" },
+  //   { "value": "archive", "label": "archive" },
+  //   { "value": "pause", "label": "pause" }
+  // ]
 
   const selectProducts = (selectedOptions) => {
     console.log({ selectedOptions })
@@ -81,12 +81,12 @@ const ManageCategories = () => {
     });
   };
 
-  const selectSelect = (selectedOption) => {
-    setCategories({
-      ...fields,
-      status: selectedOption.label,
-    });
-  };
+  // const selectSelect = (selectedOption) => {
+  //   setCategories({
+  //     ...fields,
+  //     status: selectedOption.label,
+  //   });
+  // };
 
   const bulkAction = [
     { value: "delete", label: "Delete" },
@@ -98,9 +98,9 @@ const ManageCategories = () => {
     console.log(selectedOption);
   };
 
-  const onPageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
+  // const onPageChange = (newPage) => {
+  //   setCurrentPage(newPage);
+  // };
 
   const handleBulkCheckbox = (isCheck) => {
     setBulkCheck(isCheck);
@@ -122,18 +122,16 @@ const ManageCategories = () => {
     }));
   };
 
-  const showTableRow = (selectedOption) => {
-    setSelectedValue(selectedOption.label);
-  };
+  // const showTableRow = (selectedOption) => {
+  //   setSelectedValue(selectedOption.label);
+  // };
 
-  const handleFeaturedChange = (ischeck) => {
-    setCategories({
-      ...fields,
-      isFeatured: ischeck,
-    });
-  };
-
-  const actionItems = ["Delete", "Enable", "edit"];
+  // const handleFeaturedChange = (ischeck) => {
+  //   setCategories({
+  //     ...fields,
+  //     isFeatured: ischeck,
+  //   });
+  // };
 
   const handleActionItemClick = (item, itemID) => {
     var updateItem = item?.toLowerCase();
@@ -153,7 +151,7 @@ const ManageCategories = () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(`${categoryRoute}/all`);
-      const data = res?.data?.data?.result.filter((item)=> !item?.isArchived)
+      const data = res?.data?.data?.result.filter((item) => !item?.isArchived)
       setCats(data)
     } catch (error) {
       console.log(error)

@@ -1,29 +1,42 @@
+import { useState } from "react";
 import * as Icons from "react-icons/tb";
 import Orders from '../../api/Orders.json';
-import Reviews from '../../api/Reviews.json';
 import country from '../../api/country.json';
-import {useParams, Link, useNavigate} from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Customers from '../../api/Customers.json';
-import React, { useState, useEffect } from "react";
-import Modal from "../../components/common/Modal.jsx";
 import Badge from "../../components/common/Badge.jsx";
 import Input from "../../components/common/Input.jsx";
 import Button from "../../components/common/Button.jsx";
-import Rating from "../../components/common/Rating.jsx";
-import Divider from "../../components/common/Divider.jsx";
 import Toggler from "../../components/common/Toggler.jsx";
-import CheckBox from "../../components/common/CheckBox.jsx";
 import Dropdown from "../../components/common/Dropdown.jsx";
 import Offcanvas from "../../components/common/Offcanvas.jsx";
 import Thumbnail from "../../components/common/Thumbnail.jsx";
 import Accordion from "../../components/common/Accordion.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
+import Rating from "../../components/common/Rating.jsx";
+import CheckBox from "../../components/common/CheckBox.jsx";
+import Reviews from '../../api/Reviews.json';
+import Divider from "../../components/common/Divider.jsx";
+import Modal from "../../components/common/Modal.jsx";
 
 const EditCustomer = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const { customerId } = useParams();
+  const [user, setUser] = useState({});
+  const [isLoading, setIsLoading] = useState()
 
+  console.log(customerId);
+
+  const getUser = async () => {
+    try {
+      setIsLoading(true)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
   const customer = Customers.find(customer => customer.id.toString() === customerId.toString());
 
   const [fields, setFields] = useState({
@@ -36,14 +49,14 @@ const EditCustomer = () => {
     isVendor: customer?.isVendor,
     status: customer?.status,
     image: customer?.image,
-    addressName:"",
-    addressPhone:"",
-    addressZip:"",
-    addressEmail:"",
-    addressStreet:"",
-    addressCountry:"",
-    addressState:"",
-    addressCity:"",
+    addressName: "",
+    addressPhone: "",
+    addressZip: "",
+    addressEmail: "",
+    addressStreet: "",
+    addressCountry: "",
+    addressState: "",
+    addressCity: "",
   });
 
   const handleInputChange = (key, value) => {
@@ -95,7 +108,7 @@ const EditCustomer = () => {
     setIsOffcanvasOpen(false);
   };
 
-   const actionItems = ["Delete", "View"];
+  const actionItems = ["Delete", "View"];
 
   const handleActionItemClick = (item, itemID) => {
     var updateItem = item.toLowerCase();
@@ -105,6 +118,7 @@ const EditCustomer = () => {
       navigate(`/catalog/product/manage/${itemID}`);
     }
   };
+
   return (
     <section>
       <div className="container">
@@ -130,13 +144,6 @@ const EditCustomer = () => {
                   icon={<Icons.TbMail />}
                   value={fields.email}
                   onChange={(value) => handleInputChange("email", value)}
-                />
-              </div>
-              <div className="column">
-                <Toggler
-                  label="Is Vendor"
-                  checked={fields.isVendor}
-                  onChange={isVendorCheck}
                 />
               </div>
               <div className="column">
@@ -186,7 +193,7 @@ const EditCustomer = () => {
                 <Button
                   className="sm"
                   label="new address"
-                  icon={<Icons.TbPlus/>}
+                  icon={<Icons.TbPlus />}
                   onClick={handleOpenOffcanvas}
                 />
               </h2>
@@ -247,7 +254,7 @@ const EditCustomer = () => {
                       />
                     </div>
                     <div className="column">
-                      
+
                       <MultiSelect
                         placeholder="Select Country"
                         isSelected={fields.addressCountry}
@@ -292,9 +299,9 @@ const EditCustomer = () => {
                 </div>
               </Offcanvas>
               {
-                customer?.addresses?.map((address, key)=>(
+                customer?.addresses?.map((address, key) => (
                   <div className="column" key={key}>
-                    <Accordion title={`#${key < 9 ? `0${key+1}` : key+1} Address`}>
+                    <Accordion title={`#${key < 9 ? `0${key + 1}` : key + 1} Address`}>
                       <table className="bordered">
                         <thead>
                           <tr>
@@ -339,49 +346,49 @@ const EditCustomer = () => {
                         <tr key={key}>
                           <td>{key}</td>
                           <td>
-                            <Link to={`/orders/manage/${order.id.toString()}`}>#{order.id}<Icons.TbExternalLink/></Link>
+                            <Link to={`/orders/manage/${order.id.toString()}`}>#{order.id}<Icons.TbExternalLink /></Link>
                           </td>
                           <td>{order.payment_details.transaction_id}</td>
                           <td>{order.payment_details.payment_method}</td>
                           <td>{order.payment_details.amount}</td>
                           <td className="td_status">
-                              {order.status.toLowerCase() === "active" ||
-                               order.status.toLowerCase() === "completed" ||
-                               order.status.toLowerCase() === "delivered" ||
-                               order.status.toLowerCase() === "shipped" ||
-                               order.status.toLowerCase() === "new" ||
-                               order.status.toLowerCase() === "coming soon" ? (
-                                 <Badge
-                                   label={order.status}
-                                   className="light-success"
-                                 />
-                               ) : order.status.toLowerCase() === "inactive" ||
-                                 order.status.toLowerCase() === "out of stock" ||
-                                 order.status.toLowerCase() === "locked" ||
-                                 order.status.toLowerCase() === "discontinued" ? (
-                                 <Badge
-                                   label={order.status}
-                                   className="light-danger"
-                                 />
-                               ) : order.status.toLowerCase() === "on sale" ||
-                                   order.status.toLowerCase() === "featured" ||
-                                   order.status.toLowerCase() === "processing" ||
-                                   order.status.toLowerCase() === "pending" ? (
-                                 <Badge
-                                   label={order.status}
-                                   className="light-warning"
-                                 />
-                               ) : order.status.toLowerCase() === "archive" ||
-                                   order.status.toLowerCase() === "pause" ? (
-                                 <Badge
-                                   label={order.status}
-                                   className="light-secondary"
-                                 />
-                               ) : (
-                                 "nodata"
-                               )}
-                            </td>
-                          
+                            {order.status.toLowerCase() === "active" ||
+                              order.status.toLowerCase() === "completed" ||
+                              order.status.toLowerCase() === "delivered" ||
+                              order.status.toLowerCase() === "shipped" ||
+                              order.status.toLowerCase() === "new" ||
+                              order.status.toLowerCase() === "coming soon" ? (
+                              <Badge
+                                label={order.status}
+                                className="light-success"
+                              />
+                            ) : order.status.toLowerCase() === "inactive" ||
+                              order.status.toLowerCase() === "out of stock" ||
+                              order.status.toLowerCase() === "locked" ||
+                              order.status.toLowerCase() === "discontinued" ? (
+                              <Badge
+                                label={order.status}
+                                className="light-danger"
+                              />
+                            ) : order.status.toLowerCase() === "on sale" ||
+                              order.status.toLowerCase() === "featured" ||
+                              order.status.toLowerCase() === "processing" ||
+                              order.status.toLowerCase() === "pending" ? (
+                              <Badge
+                                label={order.status}
+                                className="light-warning"
+                              />
+                            ) : order.status.toLowerCase() === "archive" ||
+                              order.status.toLowerCase() === "pause" ? (
+                              <Badge
+                                label={order.status}
+                                className="light-secondary"
+                              />
+                            ) : (
+                              "nodata"
+                            )}
+                          </td>
+
                           <td className="td_action">
                             <TableAction
                               actionItems={actionItems}
@@ -489,7 +496,7 @@ const EditCustomer = () => {
                   selectedValue={fields.status}
                   onClick={handleStatusSelect}
                   options={status}
-                  // className="sm"
+                // className="sm"
                 />
               </div>
             </div>
