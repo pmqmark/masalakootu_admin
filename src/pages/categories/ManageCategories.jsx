@@ -17,6 +17,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 // import Toggler from "../../components/common/Toggler.jsx";
 import { categoryRoute, getAllProducts } from "../../lib/endPoints.js";
 import { toast } from "sonner";
+import TableSkeleton from "../../components/common/TableSkeleton.jsx";
 
 const ManageCategories = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -318,7 +319,9 @@ const ManageCategories = () => {
                       <th className="td_action">actions</th>
                     </tr>
                   </thead>
-                  {isLoading ? ("") : (
+                  {isLoading ? (
+                    <TableSkeleton ColumnCount={8} />
+                  ) : (
                     <tbody>
                       {cats.map((category, key) => {
                         return (
