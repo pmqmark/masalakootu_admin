@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom';
 import * as Icons from "react-icons/tb";
 import Bar from '../../charts/Bar.jsx';
@@ -7,8 +6,70 @@ import Products from '../../api/Products.json';
 import Badge from '../../components/common/Badge.jsx';
 import Button from '../../components/common/Button.jsx';
 import Profile from '../../components/common/Profile.jsx';
+import { useEffect, useState } from 'react';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate.js';
+import { getAllMetrics, getOrderStatus, getRecentOrder, orderRoute } from '../../lib/endPoints.js';
 
 const Overview = () => {
+	const axiosPrivate = useAxiosPrivate();
+	const [metrics, setMetrics] = useState({});
+	const [recentOrder, setRecentOrder] = useState();
+	const [orders, setOrders] = useState({});
+	const [orderStatus, setOrdersStatus] = useState({});
+	const [loading, setLoading] = useState(false);
+
+	const dummyImage = '../../assets/dummy1.jpg'
+
+	const getData = async () => {
+		setLoading(true)
+		try {
+			const results = await Promise.allSettled([
+				axiosPrivate.get(getAllMetrics),
+				axiosPrivate.get(getOrderStatus),
+				axiosPrivate.get(getRecentOrder),
+				axiosPrivate.get(`${orderRoute}/all`),
+			]);
+
+			if (results[0].status === "fulfilled") {
+				// console.log(results[0].value.data?.data)
+				setMetrics(results[0].value.data?.data);
+			} else {
+				console.error("Failed to fetch user:", results[0]?.reason);
+			}
+
+			if (results[1].status === "fulfilled") {
+				// console.log(results[1].value.data?.data?.orderStatusesAndCounts)
+				setOrdersStatus(results[1].value.data?.data?.orderStatusesAndCounts);
+			} else {
+				console.error("Failed to fetch orders:", results[1]?.reason);
+			}
+
+			if (results[2].status === "fulfilled") {
+				// console.log(results[2].value.data?.data?.result)
+				setOrders(results[2].value.data?.data?.result);
+			} else {
+				console.error("Failed to fetch notifications:", results[2]?.reason);
+			}
+			if (results[3].status === "fulfilled") {
+				// console.log(results[3].value.data?.data)
+				const orders = results[3].value?.data?.data?.orders;
+				setRecentOrder(Array.isArray(orders) ? orders.slice(0, 15) : []);
+			} else {
+				console.error("Failed to fetch notifications:", results[3]?.reason);
+			}
+
+		} catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	useEffect(() => {
+		getData()
+	}, [])
+
+	console.log(recentOrder)
 	return (
 		<section>
 			<div className="container">
@@ -19,28 +80,28 @@ const Overview = () => {
 								<Icons.TbShoppingCart />
 								<div className="sale_overview_content">
 									<h5 className="sale_title">Total Sale</h5>
-									<h4 className="sale_value">$1,210,387</h4>
+									<h4 className="sale_value">₹{metrics?.totalSale}</h4>
 								</div>
 							</div>
 							<div className="sale_overview_card">
 								<Icons.TbShoppingBag />
 								<div className="sale_overview_content">
 									<h5 className="sale_title">Total Orders</h5>
-									<h4 className="sale_value">1234</h4>
+									<h4 className="sale_value">{metrics?.totalOrders}</h4>
 								</div>
 							</div>
 							<div className="sale_overview_card">
 								<Icons.TbPackage />
 								<div className="sale_overview_content">
 									<h5 className="sale_title">Total Items</h5>
-									<h4 className="sale_value">5678</h4>
+									<h4 className="sale_value">{metrics?.totalItems}</h4>
 								</div>
 							</div>
 							<div className="sale_overview_card">
 								<Icons.TbChartBar />
 								<div className="sale_overview_content">
 									<h5 className="sale_title">Total Revenue</h5>
-									<h4 className="sale_value">$987,654</h4>
+									<h4 className="sale_value">₹{metrics?.totalRevenue}</h4>
 								</div>
 							</div>
 						</div>
@@ -52,7 +113,7 @@ const Overview = () => {
 									className="sm"
 								/>
 							</h2>
-							<Area />
+							<Area/>
 						</div>
 						<div className="content_item">
 							<h2 className="sub_heading">Best selling products</h2>
@@ -105,30 +166,28 @@ const Overview = () => {
 						</div>
 					</div>
 					<div className="sidebar">
-						<div className="sidebar_item">
+						{/* <div className="sidebar_item">
 							<h2 className="sub_heading">Audience</h2>
 							<Bar />
-						</div>
+						</div> */}
 						<div className="sidebar_item">
 							<h2 className="sub_heading">Order Recently</h2>
 							<div className="recent_orders column">
-								{
-									Products.map((product, key) => (
-										<Link key={key} to={`/orders/manage/${product.id}`} className="recent_order">
-											<figure className="recent_order_img">
-												<img src={product.images.thumbnail} alt="" />
-											</figure>
-											<div className="recent_order_content">
-												<h4 className="recent_order_title">{product.name}</h4>
-												<p className="recent_order_category">{product.category}</p>
-											</div>
-											<div className="recent_order_details">
-												<h5 className="recent_order_price">${product.price}</h5>
-												<p className="recent_order_quantity">items: {product.inventory.quantity}</p>
-											</div>
-										</Link>
-									))
-								}
+								{recentOrder?.map((product, key) => (
+									<Link key={key} to={`/orders/manage/${product?._id}`} className="recent_order">
+										<figure className="recent_order_img">
+											<img src={product?.items[0]?.thumbnail?.location ? product?.items[0]?.thumbnail?.location : dummyImage} alt="" />
+										</figure>
+										<div className="recent_order_content">
+											<h4 className="recent_order_title">{product?.items[0]?.name}</h4>
+											<p className="recent_order_category">{product?.payMode}</p>
+										</div>
+										<div className="recent_order_details">
+											<h5 className="recent_order_price">${product?.amount}</h5>
+											<p className="recent_order_quantity">items: {product?.items?.length}</p>
+										</div>
+									</Link>
+								))}
 							</div>
 						</div>
 					</div>

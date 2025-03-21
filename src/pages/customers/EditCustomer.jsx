@@ -1,63 +1,50 @@
-import { useState } from "react";
-import * as Icons from "react-icons/tb";
-import Orders from '../../api/Orders.json';
-import country from '../../api/country.json';
+import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import Customers from '../../api/Customers.json';
+import { getAUserRoute } from "../../lib/endPoints.js";
+import * as Icons from "react-icons/tb";
+import country from '../../api/country.json';
 import Badge from "../../components/common/Badge.jsx";
 import Input from "../../components/common/Input.jsx";
 import Button from "../../components/common/Button.jsx";
-import Toggler from "../../components/common/Toggler.jsx";
-import Dropdown from "../../components/common/Dropdown.jsx";
 import Offcanvas from "../../components/common/Offcanvas.jsx";
 import Thumbnail from "../../components/common/Thumbnail.jsx";
 import Accordion from "../../components/common/Accordion.jsx";
-import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import TableAction from "../../components/common/TableAction.jsx";
+import Customers from '../../api/Customers.json';
+import Orders from '../../api/Orders.json';
 import Rating from "../../components/common/Rating.jsx";
 import CheckBox from "../../components/common/CheckBox.jsx";
+import Toggler from "../../components/common/Toggler.jsx";
+import Dropdown from "../../components/common/Dropdown.jsx";
 import Reviews from '../../api/Reviews.json';
 import Divider from "../../components/common/Divider.jsx";
 import Modal from "../../components/common/Modal.jsx";
 
 const EditCustomer = () => {
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
   const { customerId } = useParams();
   const [user, setUser] = useState({});
+  const [address, setAddress] = useState({});
+  const [orderHistory, setOrderHistory] = useState([]);
   const [isLoading, setIsLoading] = useState()
-
-  console.log(customerId);
 
   const getUser = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
+      const res = await axiosPrivate.get(`${getAUserRoute}/${customerId}`);
+      console.log(res.data, 'get a user');
+      setUser(res?.data?.data?.user)
+      setAddress(res?.data?.data?.address)
+      setOrderHistory(res?.data?.data?.orderHistory)
     } catch (error) {
       console.log(error)
     } finally {
       setIsLoading(false)
     }
   }
-  const customer = Customers.find(customer => customer.id.toString() === customerId.toString());
-
-  const [fields, setFields] = useState({
-    name: customer?.name,
-    email: customer?.contact.email,
-    phone: customer?.contact.phone,
-    date: customer?.dob,
-    password: "",
-    passwordConfirm: "",
-    isVendor: customer?.isVendor,
-    status: customer?.status,
-    image: customer?.image,
-    addressName: "",
-    addressPhone: "",
-    addressZip: "",
-    addressEmail: "",
-    addressStreet: "",
-    addressCountry: "",
-    addressState: "",
-    addressCity: "",
-  });
 
   const handleInputChange = (key, value) => {
     setFields({
@@ -66,30 +53,30 @@ const EditCustomer = () => {
     });
   };
 
-  const isVendorCheck = (isCheck) => {
-    setFields({
-      ...fields,
-      isVendor: isCheck,
-    });
-  };
+  // const isVendorCheck = (isCheck) => {
+  //   setFields({
+  //     ...fields,
+  //     isVendor: isCheck,
+  //   });
+  // };
 
-  const [status, setStatus] = useState([
-    {
-      value: "active",
-      label: "active",
-    },
-    {
-      value: "locked",
-      label: "locked",
-    },
-  ]);
+  // const [status, setStatus] = useState([
+  //   {
+  //     value: "active",
+  //     label: "active",
+  //   },
+  //   {
+  //     value: "locked",
+  //     label: "locked",
+  //   },
+  // ]);
 
-  const handleStatusSelect = (isSelect) => {
-    setFields({
-      ...fields,
-      status: isSelect.label,
-    });
-  };
+  // const handleStatusSelect = (isSelect) => {
+  //   setFields({
+  //     ...fields,
+  //     status: isSelect.label,
+  //   });
+  // };
 
   const handleCountrySelect = (isSelect) => {
     setFields({
@@ -100,30 +87,38 @@ const EditCustomer = () => {
 
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
 
-  const handleOpenOffcanvas = () => {
-    setIsOffcanvasOpen(true);
-  };
+  // const handleOpenOffcanvas = () => {
+  //   setIsOffcanvasOpen(true);
+  // };
 
   const handleCloseOffcanvas = () => {
     setIsOffcanvasOpen(false);
   };
 
-  const actionItems = ["Delete", "View"];
+  // const actionItems = ["Delete", "View"];
 
-  const handleActionItemClick = (item, itemID) => {
-    var updateItem = item.toLowerCase();
-    if (updateItem === "delete") {
-      alert(`#${itemID} item delete`);
-    } else if (updateItem === "view") {
-      navigate(`/catalog/product/manage/${itemID}`);
-    }
-  };
+  // const handleActionItemClick = (item, itemID) => {
+  //   var updateItem = item.toLowerCase();
+  //   if (updateItem === "delete") {
+  //     alert(`#${itemID} item delete `);
+  //   } else if (updateItem === "view") {
+  //     navigate(`/ catalog / product / manage / ${itemID}`);
+  //   }
+  // };
+
+  useEffect(() => {
+    getUser()
+  }, [])
+
+  console.log(user)
+
 
   return (
     <section>
       <div className="container">
         <div className="wrapper flex flex-col lg:flex-row">
           <div className="content">
+            {/* base details */}
             <div className="content_item">
               <h2 className="sub_heading">Detail</h2>
               <div className="column">
@@ -132,8 +127,8 @@ const EditCustomer = () => {
                   placeholder="Enter the customer name"
                   label="Name"
                   icon={<Icons.TbUser />}
-                  value={fields.name}
-                  onChange={(value) => handleInputChange("name", value)}
+                  value={user?.firstName + " " + user?.lastName}
+                // onChange={(value) => handleInputChange("name", value)}
                 />
               </div>
               <div className="column">
@@ -142,8 +137,8 @@ const EditCustomer = () => {
                   placeholder="Enter the customer email"
                   label="Email"
                   icon={<Icons.TbMail />}
-                  value={fields.email}
-                  onChange={(value) => handleInputChange("email", value)}
+                  value={user?.email}
+                // onChange={(value) => handleInputChange("email", value)}
                 />
               </div>
               <div className="column">
@@ -152,18 +147,17 @@ const EditCustomer = () => {
                   placeholder="Enter the customer phone"
                   label="Phone"
                   icon={<Icons.TbPhone />}
-                  value={fields.phone}
-                  onChange={(value) => handleInputChange("phone", value)}
+                  value={user.mobile}
+                // onChange={(value) => handleInputChange("phone", value)}
                 />
               </div>
-              <div className="column">
+              {/* <div className="column">
                 <Input
                   type="date"
                   placeholder="Enter the customer phone"
                   label="Date"
                   icon={<Icons.TbCalendar />}
-                  value={fields.date}
-                  onChange={(value) => handleInputChange("date", value)}
+                  value={user.date}
                 />
               </div>
               <div className="column">
@@ -172,8 +166,7 @@ const EditCustomer = () => {
                   placeholder="Enter the customer password"
                   label="password"
                   icon={<Icons.TbLock />}
-                  value={fields.password}
-                  onChange={(value) => handleInputChange("password", value)}
+                  value={user.password}
                 />
               </div>
               <div className="column">
@@ -182,20 +175,21 @@ const EditCustomer = () => {
                   placeholder="Enter the customer password confirmation"
                   label="password confirmation"
                   icon={<Icons.TbLockCheck />}
-                  value={fields.passwordConfirm}
-                  onChange={(value) => handleInputChange("passwordConfirm", value)}
+                  value={user.passwordConfirm}
                 />
-              </div>
+              </div> */}
             </div>
+
+            {/* Address */}
             <div className="content_item">
               <h2 className="sub_heading">
                 <span>Addresses</span>
-                <Button
+                {/* <Button
                   className="sm"
                   label="new address"
                   icon={<Icons.TbPlus />}
                   onClick={handleOpenOffcanvas}
-                />
+                /> */}
               </h2>
               <Offcanvas isOpen={isOffcanvasOpen} onClose={handleCloseOffcanvas} className="lg">
                 <div className="offcanvas-head">
@@ -209,7 +203,7 @@ const EditCustomer = () => {
                         placeholder="Address name"
                         label="Address Name"
                         className="sm"
-                        value={fields.addressName}
+                        value={user.addressName}
                         onChange={(value) => handleInputChange("addressName", value)}
                       />
                     </div>
@@ -219,7 +213,7 @@ const EditCustomer = () => {
                         placeholder="Address Phone"
                         label="Address Phone"
                         className="sm"
-                        value={fields.addressPhone}
+                        value={user.addressPhone}
                         onChange={(value) => handleInputChange("addressPhone", value)}
                       />
                     </div>
@@ -229,7 +223,7 @@ const EditCustomer = () => {
                         placeholder="Zip code"
                         label="Zip code"
                         className="sm"
-                        value={fields.AddressZipCode}
+                        value={user.AddressZipCode}
                         onChange={(value) => handleInputChange("addressZipCode", value)}
                       />
                     </div>
@@ -239,7 +233,7 @@ const EditCustomer = () => {
                         placeholder="Address Email"
                         label="Address Email"
                         className="sm"
-                        value={fields.addressEmail}
+                        value={user.addressEmail}
                         onChange={(value) => handleInputChange("addressEmail", value)}
                       />
                     </div>
@@ -249,7 +243,7 @@ const EditCustomer = () => {
                         placeholder="Address Street"
                         label="Address Street"
                         className="sm"
-                        value={fields.addressStreet}
+                        value={user.addressStreet}
                         onChange={(value) => handleInputChange("addressStreet", value)}
                       />
                     </div>
@@ -257,7 +251,7 @@ const EditCustomer = () => {
 
                       <MultiSelect
                         placeholder="Select Country"
-                        isSelected={fields.addressCountry}
+                        isSelected={user.addressCountry}
                         onClick={handleCountrySelect}
                         options={country}
                         className="sm"
@@ -270,7 +264,7 @@ const EditCustomer = () => {
                         placeholder="Address State"
                         label="Address State"
                         className="sm"
-                        value={fields.addressState}
+                        value={user.addressState}
                         onChange={(value) => handleInputChange("addressState", value)}
                       />
                     </div>
@@ -280,7 +274,7 @@ const EditCustomer = () => {
                         placeholder="Address City"
                         label="Address City"
                         className="sm"
-                        value={fields.addressCity}
+                        value={user.addressCity}
                         onChange={(value) => handleInputChange("addressCity", value)}
                       />
                     </div>
@@ -298,35 +292,36 @@ const EditCustomer = () => {
                   />
                 </div>
               </Offcanvas>
-              {
-                customer?.addresses?.map((address, key) => (
-                  <div className="column" key={key}>
-                    <Accordion title={`#${key < 9 ? `0${key + 1}` : key + 1} Address`}>
-                      <table className="bordered">
-                        <thead>
-                          <tr>
-                            <th>Street</th>
-                            <th>city</th>
-                            <th>State</th>
-                            <th>zip code</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>{address.street}</td>
-                            <td>{address.city}</td>
-                            <td>{address.state}</td>
-                            <td>{address.zip}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </Accordion>
-                  </div>
-                ))
-              }
+
+              <div className="column" >
+                <Accordion title={`Delivery Address`}>
+                  <table className="bordered">
+                    <thead>
+                      <tr>
+                        <th>Street</th>
+                        <th>city</th>
+                        <th>State</th>
+                        <th>zip code</th>
+                        <th>Number</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{address?.street}</td>
+                        <td>{address?.city}</td>
+                        <td>{address?.state}</td>
+                        <td>{address?.pincode}</td>
+                        <td>{address?.phoneNumber}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </Accordion>
+              </div>
             </div>
+
+            {/* Payment */}
             <div className="content_item">
-              <h2 className="sub_heading">Payments</h2>
+              <h2 className="sub_heading">Order</h2>
               <div className="column">
                 <div className="table_responsive">
                   <table className="bordered">
@@ -338,21 +333,21 @@ const EditCustomer = () => {
                         <th>Payment Method</th>
                         <th>Amount</th>
                         <th>Status</th>
-                        <th>actions</th>
+                        {/* <th>actions</th> */}
                       </tr>
                     </thead>
                     <tbody>
-                      {Orders.map((order, key) => (
+                      {orderHistory?.map((order, key) => (
                         <tr key={key}>
                           <td>{key}</td>
                           <td>
-                            <Link to={`/orders/manage/${order.id.toString()}`}>#{order.id}<Icons.TbExternalLink /></Link>
+                            <Link to={`/orders/manage/${order?._id.toString()} `}>#{key+1}<Icons.TbExternalLink /></Link>
                           </td>
-                          <td>{order.payment_details.transaction_id}</td>
-                          <td>{order.payment_details.payment_method}</td>
-                          <td>{order.payment_details.amount}</td>
+                          <td>{order?.merchantOrderId}</td>
+                          <td>{order?.payMode}</td>
+                          <td>{order?.amount}</td>
                           <td className="td_status">
-                            {order.status.toLowerCase() === "active" ||
+                            {order.status.toLowerCase() === "processing" ||
                               order.status.toLowerCase() === "completed" ||
                               order.status.toLowerCase() === "delivered" ||
                               order.status.toLowerCase() === "shipped" ||
@@ -389,14 +384,14 @@ const EditCustomer = () => {
                             )}
                           </td>
 
-                          <td className="td_action">
+                          {/* <td className="td_action">
                             <TableAction
                               actionItems={actionItems}
                               onActionItemClick={(item) =>
-                                handleActionItemClick(item, product.id)
+                                handleActionItemClick(item, product._id)
                               }
                             />
-                          </td>
+                          </td> */}
                         </tr>
                       ))}
                     </tbody>
@@ -404,6 +399,7 @@ const EditCustomer = () => {
                 </div>
               </div>
             </div>
+
             {/* <div className="content_item">
               <h2 className="sub_heading">reviews</h2>
               <div className="column">
@@ -488,23 +484,23 @@ const EditCustomer = () => {
                 className="success"
               />
             </div> */}
-            <div className="sidebar_item">
+            {/* <div className="sidebar_item">
               <h2 className="sub_heading">Status</h2>
               <div className="column">
                 <Dropdown
                   placeholder="select stock status"
-                  selectedValue={fields.status}
+                  selectedValue={user.status}
                   onClick={handleStatusSelect}
                   options={status}
                 // className="sm"
                 />
               </div>
-            </div>
+            </div> */}
             <div className="sidebar_item">
               <h2 className="sub_heading">Profile Picture</h2>
               <div className="column">
                 <Thumbnail
-                  preloadedImage={fields.image}
+                  preloadedImage={"/src/assets/dummy.jpg"}
                 />
               </div>
             </div>
