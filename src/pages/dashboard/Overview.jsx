@@ -73,7 +73,7 @@ const Overview = () => {
 	return (
 		<section>
 			<div className="container">
-				<div className="wrapper">
+				<div className="wrapper flex flex-col lg:flex-row">
 					<div className="content">
 						<div className="content_item sale_overview">
 							<div className="sale_overview_card">

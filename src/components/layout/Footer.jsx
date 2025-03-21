@@ -5,8 +5,7 @@ const Footer = () => {
   return (
     <footer>
       <div className="container">
-      <div className="footer">
-      	
+      <div className="footer flex flex-col md:flex">
       	<p>&copy; {new Date().getFullYear()} Your Website. All rights reserved.</p>
         <ul>
           <li>
