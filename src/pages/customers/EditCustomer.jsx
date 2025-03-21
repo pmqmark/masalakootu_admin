@@ -341,7 +341,7 @@ const EditCustomer = () => {
                         <tr key={key}>
                           <td>{key}</td>
                           <td>
-                            <Link to={`/orders/manage/${order?._id.toString()} `}>#{key+1}<Icons.TbExternalLink /></Link>
+                            <Link to={`/customers/manage/order/${order?._id.toString()} `}>#{key+1}<Icons.TbExternalLink /></Link>
                           </td>
                           <td>{order?.merchantOrderId}</td>
                           <td>{order?.payMode}</td>
