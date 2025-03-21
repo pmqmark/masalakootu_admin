@@ -42,20 +42,20 @@ const navigation = [
   // Orders
   {
     name: "Orders",
-    url: "/orders",
+    url: "/orders/manage",
     icon: <Icons.TbChecklist className="menu_icon" />,
-    subMenu: [
-      {
-        name: "Manage Order",
-        url: "/manage",
-        icon: <Icons.TbList className="menu_icon" />,
-      },
-      {
-        name: "add Order",
-        url: "/add",
-        icon: <Icons.TbCirclePlus className="menu_icon" />,
-      },
-    ]
+    // subMenu: [
+    //   {
+    //     name: "Manage Order",
+    //     url: "/manage",
+    //     icon: <Icons.TbList className="menu_icon" />,
+    //   },
+    //   {
+    //     name: "add Order",
+    //     url: "/add",
+    //     icon: <Icons.TbCirclePlus className="menu_icon" />,
+    //   },
+    // ]
   },
   // Customers
   {
