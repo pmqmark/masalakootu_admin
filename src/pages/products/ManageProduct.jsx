@@ -11,10 +11,12 @@ import Pagination from "../../components/common/Pagination.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import RangeSlider from "../../components/common/RangeSlider.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
-import { getAllProducts } from "../../lib/endPoints.js";
+import { archiveStatus, getAllProducts } from "../../lib/endPoints.js";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 import axios from "../../config/axios.js";
 import { TableLoading } from "../../components/common/TableLoading.jsx";
+import ConfirmDeleteModal from "../../components/common/ConfirmDeleteModal.jsx";
+import { toast } from "sonner";
 // import Products from "../../api/Products.json";
 
 const ManageProduct = () => {
@@ -32,6 +34,8 @@ const ManageProduct = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedValue, setSelectedValue] = useState(5);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItemID, setSelectedItemID] = useState(null);
   const [tableRow, setTableRow] = useState([
     { value: 2, label: "2" },
     { value: 5, label: "5" },
@@ -106,14 +110,44 @@ const ManageProduct = () => {
   const actionItems = ["Delete", "edit"];
 
   const handleActionItemClick = (item, itemID) => {
+    const selectedProduct = products.find((product) => product._id === itemID);
     var updateItem = item.toLowerCase();
     if (updateItem === "delete") {
-      alert(`#${itemID} item delete`);
+      setSelectedItemID(itemID);
+      setIsModalOpen(true); // Open modal
     } else if (updateItem === "edit") {
-      navigate(`/catalog/product/manage/${itemID}`);
+      navigate("/catalog/product/add", { state: { product: selectedProduct } });
     }
   };
-
+  const handleDeleteConfirm = async () => {
+    try {
+      // Find the selected product before updating the state
+      const selectedProduct = products.find((p) => p._id === selectedItemID);
+      const newStatus = selectedProduct?.isArchived ? "unarchived" : "archived";
+  
+      // Optimistically update the UI
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p._id === selectedItemID ? { ...p, isArchived: !p.isArchived } : p
+        )
+      );
+  
+      // Send the request to update the status
+      const response = await axiosPrivate.patch(`${archiveStatus}/${selectedItemID}`, {
+        status: newStatus,
+      });
+  
+      if (response.status === 200) {
+        toast.success(`Product ${newStatus} successfully!`);
+      }
+    } catch (error) {
+      console.error("Error updating product status:", error);
+      toast.error("Failed to update product status.");
+    } finally {
+      setIsModalOpen(false); // Close modal after action
+    }
+  };
+  
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
 
   const handleToggleOffcanvas = () => {
@@ -176,7 +210,7 @@ const ManageProduct = () => {
         <div className="wrapper">
           <div className="content transparent">
             <div className="content_head">
-              <Dropdown
+              {/* <Dropdown
                 placeholder="Bulk Action"
                 className="sm"
                 onClick={bulkActionDropDown}
@@ -191,8 +225,8 @@ const ManageProduct = () => {
               <Input
                 placeholder="Search Product..."
                 className="sm table_search"
-              />
-              <Offcanvas
+              /> */}
+              {/* <Offcanvas
                 isOpen={isOffcanvasOpen}
                 onClose={handleCloseOffcanvas}
               >
@@ -254,7 +288,7 @@ const ManageProduct = () => {
                     onClick={handleCloseOffcanvas}
                   />
                 </div>
-              </Offcanvas>
+              </Offcanvas> */}
               <div className="btn_parent">
                 <Link to="/catalog/product/add" className="sm button">
                   <Icons.TbPlus />
@@ -332,7 +366,17 @@ const ManageProduct = () => {
                               <td>{product?.sku}</td>
                               <td>{product?.createdAt.split("T")[0]}</td>
                               <td className="td_status">
-                                {product?.ratings?.average_rating}
+                                {product?.isArchived ?  (
+                                  <Badge
+                                  label="InActive"
+                                  className="light-danger"
+                                />
+                                ): (
+                                  <Badge
+                                  label="Active"
+                                  className="light-success"
+                                />
+                                )}
                               </td>
                               <td className="td_status">
                                 {product?.stock ? (
@@ -371,7 +415,7 @@ const ManageProduct = () => {
                 </table>
               </div>
             </div>
-            <div className="content_footer">
+            {/* <div className="content_footer">
               <Dropdown
                 className="top show_rows sm"
                 placeholder="please select"
@@ -384,10 +428,18 @@ const ManageProduct = () => {
                 totalPages={5}
                 onPageChange={onPageChange}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
+      
+      {/* Confirm Delete Modal */}
+      <ConfirmDeleteModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        itemID={selectedItemID}
+      />
     </section>
   );
 };
