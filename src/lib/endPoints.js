@@ -25,6 +25,7 @@ export const orderRoute = "orders";
 
 // User API
 export const usersRoute = "users";
+export const usersBlockRoute = "users"; //id
 
 // Common API
 export const uploadMultiFilesRoute = "uploads/multiple";
