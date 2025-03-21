@@ -108,7 +108,7 @@ const ManageProduct = () => {
     setSelectedValue(selectedOption.label);
   };
 
-  const actionItems = ["Delete", "edit","view"];
+  const actionItems = ["Delete", "edit", "view"];
 
   const handleActionItemClick = (item, itemID) => {
     const selectedProduct = products.find((product) => product._id === itemID);
@@ -128,19 +128,19 @@ const ManageProduct = () => {
       // Find the selected product before updating the state
       const selectedProduct = products.find((p) => p._id === selectedItemID);
       const newStatus = selectedProduct?.isArchived ? "unarchived" : "archived";
-  
+
       // Optimistically update the UI
       setProducts((prevProducts) =>
         prevProducts.map((p) =>
           p._id === selectedItemID ? { ...p, isArchived: !p.isArchived } : p
         )
       );
-  
+
       // Send the request to update the status
       const response = await axiosPrivate.patch(`${archiveStatus}/${selectedItemID}`, {
         status: newStatus,
       });
-  
+
       if (response.status === 200) {
         toast.success(`Product ${newStatus} successfully!`);
       }
@@ -151,7 +151,7 @@ const ManageProduct = () => {
       setIsModalOpen(false); // Close modal after action
     }
   };
-  
+
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
 
   const handleToggleOffcanvas = () => {
@@ -328,88 +328,88 @@ const ManageProduct = () => {
                   ) : (
                     products.map((product, key) => {
                       return (
-                            <tbody>
-                            <tr key={key}>
-                              <td className="td_checkbox">
-                                <CheckBox
-                                  onChange={(isCheck) =>
-                                    handleCheckProduct(isCheck, product?._id)
-                                  }
-                                  isChecked={specificChecks[product?._id] || false}
-                                />
-                              </td>
-                              <td className="td_id">{key+1}</td>
-                              <td className="td_image">
-                                {
-                                  product?.thumbnail ? (<img
-                                    src={product?.thumbnail?.location}
-                                    alt={product?.name}
-                                  />) : (<img
-                                    src='/public/dummy.jpg'
-                                    alt={product?.name}
-                                  />
-                                  )
+                        <tbody key={key}>
+                          <tr >
+                            <td className="td_checkbox">
+                              <CheckBox
+                                onChange={(isCheck) =>
+                                  handleCheckProduct(isCheck, product?._id)
                                 }
+                                isChecked={specificChecks[product?._id] || false}
+                              />
+                            </td>
+                            <td className="td_id">{key + 1}</td>
+                            <td className="td_image">
+                              {
+                                product?.thumbnail ? (<img
+                                  src={product?.thumbnail?.location || '../../../public/dummy.png'}
+                                  alt={product?.name}
+                                />) : (<img
+                                  src='/public/dummy.jpg'
+                                  alt={product?.name}
+                                />
+                                )
+                              }
 
-                              </td>
-                              <td colSpan="4">
-                                <Link to={product.id}>{product.name}</Link>
-                              </td>
-                              <td>
-                                {`${product.price} `}
-                                <b>{product?.currency}</b>
-                              </td>
-                              <td>
-                                <Link>{product?.brand}</Link>
-                              </td>
-                              <td>{product?.sku}</td>
-                              <td>{product?.createdAt.split("T")[0]}</td>
-                              <td className="td_status">
-                                {product?.isArchived ?  (
-                                  <Badge
+                            </td>
+                            <td colSpan="4">
+                              <Link to={product.id}>{product.name}</Link>
+                            </td>
+                            <td>
+                              {`${product.price} `}
+                              <b>{product?.currency}</b>
+                            </td>
+                            <td>
+                              <Link>{product?.brand}</Link>
+                            </td>
+                            <td>{product?.sku}</td>
+                            <td>{product?.createdAt.split("T")[0]}</td>
+                            <td className="td_status">
+                              {product?.isArchived ? (
+                                <Badge
                                   label="InActive"
                                   className="light-danger"
                                 />
-                                ): (
-                                  <Badge
+                              ) : (
+                                <Badge
                                   label="Active"
                                   className="light-success"
                                 />
-                                )}
-                              </td>
-                              <td className="td_status">
-                                {product?.stock ? (
-                                  <Badge
-                                    label="In Stock"
-                                    className="light-success"
-                                  />
-                                ) : product?.stock < 10 &&
-                                  product?.stock > 0 ? (
-                                  <Badge
-                                    label="Low Stock"
-                                    className="light-warning"
-                                  />
-                                ) : (
-                                  <Badge
-                                    label="Out of Stock"
-                                    className="light-danger"
-                                  />
-                                )}
-                              </td>
-                              <td className="td_action">
-                                <TableAction
-                                  actionItems={actionItems}
-                                  onActionItemClick={(item) =>
-                                    handleActionItemClick(item, product?._id)
-                                  }
+                              )}
+                            </td>
+                            <td className="td_status">
+                              {product?.stock ? (
+                                <Badge
+                                  label="In Stock"
+                                  className="light-success"
                                 />
-                              </td>
-                            </tr>
-                  </tbody>
-                          );
-                        })
-                      )
-                    }
+                              ) : product?.stock < 10 &&
+                                product?.stock > 0 ? (
+                                <Badge
+                                  label="Low Stock"
+                                  className="light-warning"
+                                />
+                              ) : (
+                                <Badge
+                                  label="Out of Stock"
+                                  className="light-danger"
+                                />
+                              )}
+                            </td>
+                            <td className="td_action">
+                              <TableAction
+                                actionItems={actionItems}
+                                onActionItemClick={(item) =>
+                                  handleActionItemClick(item, product?._id)
+                                }
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      );
+                    })
+                  )
+                  }
 
                 </table>
               </div>
@@ -431,7 +431,7 @@ const ManageProduct = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Confirm Delete Modal */}
       <ConfirmDeleteModal
         isOpen={isModalOpen}
