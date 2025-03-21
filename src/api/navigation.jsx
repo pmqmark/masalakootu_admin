@@ -20,11 +20,11 @@ const navigation = [
         url: "/product/manage",
         icon: <Icons.TbGardenCart className="menu_icon" />,
       },
-      {
-        name: "add Product",
-        url: "/product/add",
-        icon: <Icons.TbCirclePlus className="menu_icon" />,
-      },
+      // {
+      //   name: "add Product",
+      //   url: "/product/add",
+      //   icon: <Icons.TbCirclePlus className="menu_icon" />,
+      // },
       // Categories
       {
         name: "Categories",
