@@ -32,11 +32,11 @@ const navigation = [
         icon: <Icons.TbCategory className="menu_icon" />,
       },
       // Attributes
-      {
-        name: "Attributes",
-        url: "/product/attribute",
-        icon: <Icons.TbCalendar className="menu_icon" />,
-      },
+      // {
+      //   name: "Attributes",
+      //   url: "/product/attribute",
+      //   icon: <Icons.TbCalendar className="menu_icon" />,
+      // },
     ],
   },
   // Orders
