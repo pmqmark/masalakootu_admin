@@ -107,15 +107,18 @@ const ManageProduct = () => {
     setSelectedValue(selectedOption.label);
   };
 
-  const actionItems = ["Delete", "edit"];
+  const actionItems = ["Delete", "edit","view"];
 
   const handleActionItemClick = (item, itemID) => {
     const selectedProduct = products.find((product) => product._id === itemID);
     var updateItem = item.toLowerCase();
+
     if (updateItem === "delete") {
       setSelectedItemID(itemID);
-      setIsModalOpen(true); // Open modal
+      setIsModalOpen(true); // Open delete confirmation modal
     } else if (updateItem === "edit") {
+      navigate("/catalog/product/add", { state: { product: selectedProduct } });
+    } else if (updateItem === "view") {
       navigate("/catalog/product/add", { state: { product: selectedProduct } });
     }
   };
