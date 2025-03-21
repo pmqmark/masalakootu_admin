@@ -206,6 +206,8 @@ const ManageCategories = () => {
     }
   }
 
+  console.log(cats)
+
   return (
     <section className="categories">
       <div className="container">
