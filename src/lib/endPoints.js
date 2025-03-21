@@ -26,7 +26,14 @@ export const orderRoute = "orders";
 // User API
 export const usersRoute = "users";
 export const usersBlockRoute = "users"; //id
+export const getAUserRoute = "users"; //id
+export const getAddress = "users/addresses"; //id
 
 // Common API
 export const uploadMultiFilesRoute = "uploads/multiple";
 export const uploadSingleFilesRoute = "uploads/single";
+
+// dashboard metrics
+export const getAllMetrics = "dashboard/metrics";
+export const getOrderStatus = "dashboard/order-status-count";
+export const getRecentOrder = "dashboard/recent-orders";

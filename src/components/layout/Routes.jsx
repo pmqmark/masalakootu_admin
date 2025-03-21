@@ -122,6 +122,10 @@ const routes = [
     path: "/customers/manage/:customerId",
     element: <EditCustomer />,
   },
+  {
+    path: "/customers/manage/order/:orderID",
+    element: <OrderDetail />,
+  },
   // brand
   {
     path: "/brands/add",

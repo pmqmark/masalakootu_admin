@@ -1,8 +1,8 @@
-import React from "react";
 import Chart from "react-apexcharts";
 import SaleProductData from "../api/SaleProductData.json";
 
-const AreaChart = () => {
+const AreaChart = ({ data }) => {
+  console.log(data)
   const options = {
     chart: {
       type: "area",
@@ -47,14 +47,14 @@ const AreaChart = () => {
     yaxis: {
       min: 0,
       forceNiceScale: true,
-       labels: {
-          formatter: function (value) {
-            return `${value}K`;
-          },
-          style: {
-            colors: "#888",
-          },
+      labels: {
+        formatter: function (value) {
+          return `${value}K`;
         },
+        style: {
+          colors: "#888",
+        },
+      },
     },
     tooltip: {
       x: {
