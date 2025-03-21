@@ -7,6 +7,7 @@ import { uploadMultiFilesRoute } from '../../lib/endPoints.js';
 
 const DropZone = ({ uploadedFiles, setUploadedFiles }) => {
   const axiosPrivate = useAxiosPrivate()
+  const [loading, setLoading] = useState(false); 
   // const [uploadedFiles, setUploadedFiles] = useState([]);
 
   const onDrop = useCallback(async acceptedFiles => {
@@ -15,7 +16,7 @@ const DropZone = ({ uploadedFiles, setUploadedFiles }) => {
     //   id: Date.now() + file.name 
     // }));
     // setUploadedFiles(prevFiles => [...prevFiles, ...filesWithPreview]);
-
+    setLoading(true);
     const formData = new FormData();
     acceptedFiles.forEach(file => {
       formData.append('files', file)
@@ -36,6 +37,8 @@ const DropZone = ({ uploadedFiles, setUploadedFiles }) => {
 
     } catch (error) {
       console.error('Error uploading files:', error)
+    }finally {
+      setLoading(false); 
     }
 
   }, [uploadedFiles]);
@@ -58,6 +61,11 @@ const DropZone = ({ uploadedFiles, setUploadedFiles }) => {
         <input {...getInputProps()} />
         <p>Drag & drop files here, or click to select files</p>
       </div>
+      {loading && (
+        <div className="flex justify-start items-center mt-4">
+          <Icons.TbLoader2 className="animate-spin text-3xl text-blue-500" />
+        </div>
+      )}
       {
         uploadedFiles.length > 0 ?
           <div className="uploaded-images">
