@@ -14,8 +14,11 @@ const Sidebar = () => {
     setToggle((prevToggle) => (prevToggle === key ? null : key));
   };
 
+
+
+  
   const handleSidebar = () => {
-    setSidebar(!sidebar);
+    setSidebar((prev) => (prev ? false : !prev));
   };
 
   const handleIsLogout = () => {
@@ -23,18 +26,21 @@ const Sidebar = () => {
   };
 
   return (
-    <div className={`sidemenu ${sidebar ? 'active' : ''}`}>
+    <div className={`sidemenu relative ${sidebar ? 'active' : ''}`}>
       {/* Admin User */}
-      <div className="sidebar_profile">
-        {/*<Link to="/" className="logo">
+      <div className="sidebar_profile ">
+        {/* <Link to="/" className="logo">
           <img src={Logo} alt="logo" />
-        </Link>*/}
+        </Link> */}
 
         <h2 className="logo_text">Masalakoottu</h2>
-        <Link className="navbar_icon menu_sidebar" onClick={handleSidebar}>
-          <Icons.TbChevronsLeft className={`${sidebar ? 'active' : ''}`} />
-        </Link>
+        
       </div>
+       <div className={ `bg-gray-300 lg:hidden flex p-[6px] absolute top-[40%] left-[90%] rounded-2xl  text-yellow-300 text-2xl ${sidebar ? 'ml-1' : 'ml-12'} `}>
+      <button className="" onClick={handleSidebar}>
+        {sidebar ? <Icons.TbChevronsLeft size={30} /> : <Icons.TbChevronsRight size={30} />}
+      </button>
+       </div>
       {/* menu links */}
       <ul className="menu_main">
         {navigation.map(function (navigationItem, key) {
