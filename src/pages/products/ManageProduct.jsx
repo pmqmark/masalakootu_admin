@@ -17,6 +17,7 @@ import axios from "../../config/axios.js";
 import { TableLoading } from "../../components/common/TableLoading.jsx";
 import ConfirmDeleteModal from "../../components/common/ConfirmDeleteModal.jsx";
 import { toast } from "sonner";
+import TableSkeleton from "../../components/common/TableSkeleton.jsx";
 // import Products from "../../api/Products.json";
 
 const ManageProduct = () => {
@@ -322,17 +323,12 @@ const ManageProduct = () => {
                       <th className="td_action">#</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {
-                      isLoading ? (
-                        <tr>
-                        <td colSpan="13" className="text-center">
-                          <TableLoading />
-                        </td>
-                      </tr>
-                      ) : (
-                        products.map((product, key) => {
-                          return (
+                  {isLoading ? (
+                    <TableSkeleton ColumnCount={14} />
+                  ) : (
+                    products.map((product, key) => {
+                      return (
+                            <tbody>
                             <tr key={key}>
                               <td className="td_checkbox">
                                 <CheckBox
@@ -409,12 +405,12 @@ const ManageProduct = () => {
                                 />
                               </td>
                             </tr>
+                  </tbody>
                           );
                         })
                       )
                     }
 
-                  </tbody>
                 </table>
               </div>
             </div>
