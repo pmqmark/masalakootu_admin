@@ -64,7 +64,7 @@ const Thumbnail = ({ className, required, preloadedImage, onClick, setImage }) =
 
   return (
     <>
-      <div className={`thumbnail ${className ? className : ""}`} >
+      <div className={`thumbnail ${className ? className : ""}`} onClick={onClick} >
         <figure className="uploaded-image">
           {uploadedImage ? (
             <img src={uploadedImage} alt="Product Thumbnail" />

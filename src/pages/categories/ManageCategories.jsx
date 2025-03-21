@@ -1,20 +1,20 @@
-import * as Icons from "react-icons/tb";
-import React, { useState, useEffect } from "react";
-import Categories from "../../api/Categories.json";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input.jsx";
 import Badge from "../../components/common/Badge.jsx";
 import Button from "../../components/common/Button.jsx";
-import Toggler from "../../components/common/Toggler.jsx";
 import Divider from "../../components/common/Divider.jsx";
 import CheckBox from "../../components/common/CheckBox.jsx";
 import Textarea from "../../components/common/Textarea.jsx";
 import Dropdown from "../../components/common/Dropdown.jsx";
 import Thumbnail from "../../components/common/Thumbnail.jsx";
-import Pagination from "../../components/common/Pagination.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+// import * as Icons from "react-icons/tb";
+// import Categories from "../../api/Categories.json";
+// import Pagination from "../../components/common/Pagination.jsx";
+// import Toggler from "../../components/common/Toggler.jsx";
 import { categoryRoute, getAllProducts } from "../../lib/endPoints.js";
 import { toast } from "sonner";
 
@@ -25,13 +25,15 @@ const ManageCategories = () => {
   const navigate = useNavigate();
   const [bulkCheck, setBulkCheck] = useState(false);
   const [specificChecks, setSpecificChecks] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedValue, setSelectedValue] = useState(5);
-  const [tableRow, setTableRow] = useState([
-    { value: 2, label: "2" },
-    { value: 5, label: "5" },
-    { value: 10, label: "10" },
-  ]);
+
+  // ------Pagination----------
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [selectedValue, setSelectedValue] = useState(5);
+  // const [tableRow, setTableRow] = useState([
+  //   { value: 2, label: "2" },
+  //   { value: 5, label: "5" },
+  //   { value: 10, label: "10" },
+  // ]);
 
   const [cataImage, setCataImage] = useState({})
   const [fields, setCategories] = useState({
@@ -202,11 +204,11 @@ const ManageCategories = () => {
     }
   }
 
-  console.log(fields, cataImage)
   return (
     <section className="categories">
       <div className="container">
-        <div className="wrapper">
+        <div className="wrapper flex flex-col md:flex-row">
+          {/* category  */}
           <div className="sidebar">
             <div className="sidebar_item">
               <h2 className="sub_heading">add category</h2>
@@ -275,6 +277,8 @@ const ManageCategories = () => {
               />
             </div>
           </div>
+
+          {/* table */}
           <div className="content transparent">
             <div className="flex justify-between w-full">
               <Dropdown
@@ -314,52 +318,54 @@ const ManageCategories = () => {
                       <th className="td_action">actions</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {cats.map((category, key) => {
-                      return (
-                        <tr key={key}>
-                          <td className="td_checkbox">
-                            <CheckBox
-                              onChange={(isCheck) =>
-                                handleCheckCategory(isCheck, category.id)
-                              }
-                              isChecked={specificChecks[category.id] || false}
-                            />
-                          </td>
-                          <td className="td_id">{category._id}</td>
-                          <td className="td_image">
-                            <img src={category.image?.location} alt={category.image?.name} />
-                          </td>
-                          <td>
-                            <Link to={category._id}>{category.name}</Link>
-                          </td>
-                          <td className="td_order">{category.description}</td>
-                          <td className="td_status">
-                            {category.isArchived ? (
-                              <Badge
-                                label={`Archived`}
-                                className="light-danger"
+                  {isLoading ? ("") : (
+                    <tbody>
+                      {cats.map((category, key) => {
+                        return (
+                          <tr key={key}>
+                            <td className="td_checkbox">
+                              <CheckBox
+                                onChange={(isCheck) =>
+                                  handleCheckCategory(isCheck, category.id)
+                                }
+                                isChecked={specificChecks[category.id] || false}
                               />
-                            ) : (
-                              <Badge
-                                label={`Active`}
-                                className="light-success"
+                            </td>
+                            <td className="td_id">{key + 1}</td>
+                            <td className="td_image">
+                              <img src={category?.image?.location || "/public/dummy.jpg"} alt={category.image?.name} />
+                            </td>
+                            <td>
+                              <Link to={category._id}>{category.name}</Link>
+                            </td>
+                            <td className="td_order truncate max-w-[200px]">{category.description}</td>
+                            <td className="td_status">
+                              {category.isArchived ? (
+                                <Badge
+                                  label={`Archived`}
+                                  className="light-danger"
+                                />
+                              ) : (
+                                <Badge
+                                  label={`Active`}
+                                  className="light-success"
+                                />
+                              )}
+                            </td>
+                            <td>{category.createdAt?.split('T')[0] ?? 'NIL'}</td>
+                            <td className="td_action">
+                              <TableAction
+                                actionItems={actionItems}
+                                onActionItemClick={(item) =>
+                                  handleActionItemClick(item, category.id)
+                                }
                               />
-                            )}
-                          </td>
-                          <td>{category.createdAt ?? 'NIL'}</td>
-                          <td className="td_action">
-                            <TableAction
-                              actionItems={actionItems}
-                              onActionItemClick={(item) =>
-                                handleActionItemClick(item, category.id)
-                              }
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  )}
                 </table>
               </div>
             </div>
