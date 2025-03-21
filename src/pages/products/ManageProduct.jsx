@@ -14,6 +14,7 @@ import MultiSelect from "../../components/common/MultiSelect.jsx";
 import { getAllProducts } from "../../lib/endPoints.js";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 import axios from "../../config/axios.js";
+import { TableLoading } from "../../components/common/TableLoading.jsx";
 // import Products from "../../api/Products.json";
 
 const ManageProduct = () => {
@@ -287,9 +288,11 @@ const ManageProduct = () => {
                   <tbody>
                     {
                       isLoading ? (
-                        <div>
-                          <h1>Loading....</h1>
-                        </div>
+                        <tr>
+                        <td colSpan="13" className="text-center">
+                          <TableLoading />
+                        </td>
+                      </tr>
                       ) : (
                         products.map((product, key) => {
                           return (
