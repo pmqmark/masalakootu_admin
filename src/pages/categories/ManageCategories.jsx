@@ -153,7 +153,8 @@ const ManageCategories = () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(`${categoryRoute}/all`);
-      setCats(res?.data?.data?.result)
+      const data = res?.data?.data?.result.filter((item)=> !item?.isArchived)
+      setCats(data)
     } catch (error) {
       console.log(error)
     } finally {
@@ -222,11 +223,11 @@ const ManageCategories = () => {
 
       // console.log(newStatus,selectedProduct,products,selectedItemID)
       // Optimistically update the UI
-      setCats((prevProducts) =>
-        prevProducts.map((p) =>
-          p._id === selectedItemID ? { ...p, isArchived: !p.isArchived } : p
-        )
-      );
+      // setCats((prevProducts) =>
+      //   prevProducts.map((p) =>
+      //     p._id === selectedItemID ? { ...p, isArchived: !p.isArchived } : p
+      //   )
+      // );
 
       // Send the request to update the status
       const response = await axiosPrivate.patch(`${archiveCategory}/${selectedItemID}`, {
@@ -237,6 +238,7 @@ const ManageCategories = () => {
       console.log(response?.data)
       if (response.status === 201) {
         toast.success(`Product ${newStatus} successfully!`);
+        getCats()
       }
 
       console.log(response)
