@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import * as Icons from "react-icons/tb";
 
 const MultiSelect = ({
@@ -17,7 +18,7 @@ const MultiSelect = ({
   const inputRef = useRef(null);
 
   const selectedHandle = (option) => {
-    const { value, label } = option;
+    const { value } = option;
     if (!isMulti) {
       setSelected([option]);
       setBool(false);
