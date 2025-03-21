@@ -20,7 +20,6 @@ import { toast } from "sonner";
 
 const ManageCategories = () => {
   const axiosPrivate = useAxiosPrivate();
-  const categories = Categories;
   const [isLoading, setLoading] = useState(false)
   const [cats, setCats] = useState([])
   const navigate = useNavigate();
@@ -34,9 +33,11 @@ const ManageCategories = () => {
     { value: 10, label: "10" },
   ]);
 
+  const [cataImage, setCataImage] = useState({})
   const [fields, setCategories] = useState({
     name: "",
     description: "",
+    image: cataImage,
     productIds: [],
   });
 
@@ -63,7 +64,6 @@ const ManageCategories = () => {
     { "value": "archive", "label": "archive" },
     { "value": "pause", "label": "pause" }
   ]
-
 
   const selectProducts = (selectedOptions) => {
     console.log({ selectedOptions })
@@ -141,7 +141,6 @@ const ManageCategories = () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(`${categoryRoute}/all`);
-      console.log(res.data, 'get all Cats');
       setCats(res?.data?.data?.result)
     } catch (error) {
       console.log(error)
@@ -154,15 +153,12 @@ const ManageCategories = () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(getAllProducts);
-      console.log(res.data, 'get all Prods');
 
       if (res.data.success === true) {
         const prods = res.data.data?.result?.map(prod => ({
           value: prod._id,
           label: prod.name
         }))
-
-        console.log({ prods })
 
         setProducts(prods)
       }
@@ -178,10 +174,7 @@ const ManageCategories = () => {
     getProducts()
   }, [])
 
-  console.log({ products })
-
-
-  const refresh = async()=>{
+  const refresh = async () => {
     try {
       setCategories({
         name: "",
@@ -197,6 +190,7 @@ const ManageCategories = () => {
   }
 
   const submitHandler = async () => {
+    console.log(fields);
     try {
       const res = await axiosPrivate.post(categoryRoute, fields)
       if (res.data.success === true) {
@@ -208,6 +202,7 @@ const ManageCategories = () => {
     }
   }
 
+  console.log(fields, cataImage)
   return (
     <section className="categories">
       <div className="container">
@@ -216,13 +211,14 @@ const ManageCategories = () => {
             <div className="sidebar_item">
               <h2 className="sub_heading">add category</h2>
               <div className="column">
-                <Thumbnail />
+                <Thumbnail setImage={handleInputChange} />
               </div>
               <div className="column">
                 <Input
                   type="text"
                   placeholder="Enter the fields name"
                   label="Name"
+                  required
                   value={fields.name}
                   onChange={(value) => handleInputChange("name", value)}
                 />
@@ -257,9 +253,9 @@ const ManageCategories = () => {
                   options={statusOptions}
                   selectedValue={fields.status}
                 />
-              </div> */}
+              </div>
 
-              {/* <div className="column">
+              <div className="column">
                 <Toggler
                   label="Is featured?"
                   checked={fields.isFeatured}
@@ -270,16 +266,17 @@ const ManageCategories = () => {
               <Divider />
               <Button
                 label="Discard"
-                className="right outline"
+                className="right text-white border-none bg-red-500"
               />
               <Button
                 label="save"
+                className="text-white bg-green-600 border-none"
                 onClick={submitHandler}
               />
             </div>
           </div>
           <div className="content transparent">
-            <div className="content_head">
+            <div className="flex justify-between w-full">
               <Dropdown
                 placeholder="Bulk Action"
                 className="sm"
@@ -290,12 +287,12 @@ const ManageCategories = () => {
                 placeholder="Search Categories..."
                 className="sm table_search"
               />
-              <div className="btn_parent">
+              {/* <div className="btn_parent">
                 <Link to="/catalog/category/add" className="sm button">
                   <Icons.TbPlus />
                   <span>Create Categories</span>
                 </Link>
-              </div>
+              </div> */}
             </div>
             <div className="content_body">
               <div className="table_responsive">
@@ -366,7 +363,7 @@ const ManageCategories = () => {
                 </table>
               </div>
             </div>
-            <div className="content_footer">
+            {/* <div className="content_footer">
               <Dropdown
                 className="top show_rows sm"
                 placeholder="please select"
@@ -379,7 +376,7 @@ const ManageCategories = () => {
                 totalPages={5}
                 onPageChange={onPageChange}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -11,7 +11,6 @@ const useAxiosPrivate = () => {
   // console.log("accessToken", accessToken)
   const dispatch = useDispatch();
 
-  console.log(accessToken);
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {

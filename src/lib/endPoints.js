@@ -21,5 +21,6 @@ export const orderRoute = "orders"
 export const usersRoute = "users"
 
 export const uploadMultiFilesRoute = "uploads/multiple"
+export const uploadSingleFilesRoute = "uploads/single"
 
 export const productRoute = "products"
