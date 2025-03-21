@@ -1,6 +1,6 @@
 // General
 import NotFound from "../../pages/error/NotFound";
-import Dashboard from "../../pages/dashboard/Overview";
+import Dashboard from "../../pages/dashboard/Overview.jsx";
 
 // Media
 import Media from "../../pages/media/Media.jsx";
@@ -15,7 +15,7 @@ import Languages from "../../pages/settings/Languages";
 import SocialLogin from "../../pages/settings/SocialLogin";
 
 // Products
-import Attribute from "../../pages/products/Attribute";
+// import Attribute from "../../pages/products/Attribute";
 import AddProduct from "../../pages/products/AddProduct";
 import EditProduct from "../../pages/products/EditProduct";
 import ManageProduct from "../../pages/products/ManageProduct";
@@ -45,7 +45,7 @@ import AddVenue from "../../pages/venue/AddVenue";
 import ManageVenue from "../../pages/venue/ManageVenue";
 
 // Categories
-import AddCategories from "../../pages/categories/AddCategories";
+// import AddCategories from "../../pages/categories/AddCategories";
 import EditCategories from "../../pages/categories/EditCategories";
 import ManageCategories from "../../pages/categories/ManageCategories";
 
@@ -83,10 +83,10 @@ const routes = [
     path: "/catalog/product/manage/:productId",
     element: <EditProduct />,
   },
-  {
-    path: "/catalog/product/attribute",
-    element: <Attribute />,
-  },
+  // {
+  //   path: "/catalog/product/attribute",
+  //   element: <Attribute />,
+  // },
   // orders
   {
     path: "/orders/add",

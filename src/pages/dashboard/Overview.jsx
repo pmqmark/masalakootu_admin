@@ -1,3 +1,4 @@
+import React from 'react'
 import { Link } from 'react-router-dom';
 import * as Icons from "react-icons/tb";
 import Bar from '../../charts/Bar.jsx';
