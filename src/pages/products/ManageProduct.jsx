@@ -338,7 +338,7 @@ const ManageProduct = () => {
                                   isChecked={specificChecks[product?._id] || false}
                                 />
                               </td>
-                              <td className="td_id">{product?._id}</td>
+                              <td className="td_id">{key+1}</td>
                               <td className="td_image">
                                 {
                                   product?.thumbnail ? (<img
