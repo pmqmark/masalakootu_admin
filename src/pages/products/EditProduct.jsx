@@ -2,7 +2,7 @@ import * as Icons from "react-icons/tb";
 import Tags from "../../api/Tags.json";
 import Taxes from "../../api/Taxes.json";
 import Labels from "../../api/Labels.json";
-import Products from "../../api/Products.json";
+// import Products from "../../api/Products.json";
 import Categories from "../../api/Categories.json";
 import React, { useState, useEffect } from "react";
 import Variations from "../../api/Variations.json";
@@ -24,10 +24,15 @@ import FileUpload from "../../components/common/FileUpload.jsx";
 import TextEditor from "../../components/common/TextEditor.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
 import ManageProduct from "../../pages/products/ManageProduct.jsx";
+import { UseGetAllProducts } from "../../hooks/productHooks/UseGetAllProducts.jsx";
 
 const EditProduct = ({ productData }) => {
   const {productId} = useParams();
-  const getProduct = Products.find(product=> product.id.toString() === productId.toString());
+  const {products } = UseGetAllProducts();
+  console.log("productId:", productId);
+  console.log("All products:", products);
+  const getProduct = products.find(product=> product._id.toString() === productId.toString());
+  console.log(getProduct)
   if (!getProduct) {
     return <Routes>
       <Route path="*" element={<NotFound title="product not found" message="Sorry, the product details you are looking for could not be found."/>}/>
@@ -35,12 +40,12 @@ const EditProduct = ({ productData }) => {
   }
 
   const [product, setProduct] = useState({
-    name: getProduct.name,
-    description: getProduct.description,
-    sku: getProduct.sku,
-    priceSale: getProduct.salePrice,
-    price: getProduct.price,
-    costPerItem: getProduct.costPerItem,
+    name: getProduct?.name,
+    description: getProduct?.description,
+    sku: getProduct?.sku,
+    priceSale: getProduct?.salePrice,
+    price: getProduct?.price,
+    costPerItem: getProduct?.costPerItem,
     profit: "",
     margin: "",
     barcode: "",

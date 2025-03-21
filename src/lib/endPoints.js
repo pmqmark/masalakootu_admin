@@ -13,6 +13,7 @@ export const loginAuth = "auth/login";
 
 // Products
 export const getAllProducts = "products/all";
+export const archiveStatus = "products";
 
 export const categoryRoute = "categories"
 

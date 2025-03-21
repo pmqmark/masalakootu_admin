@@ -24,22 +24,30 @@ import MultiSelect from "../../components/common/MultiSelect.jsx";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 import { productRoute } from "../../lib/endPoints.js";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import _ from 'lodash';
+import { useLocation, useNavigate } from "react-router-dom";
+import _ from "lodash";
 
 const AddProduct = ({ productData }) => {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const location = useLocation();
+  const editProduct = location.state?.product;
 
   const initialState = {
-    name: "", description: "", brand: "", price: 0,
-    thumbnail: null, images: [], stock: 0,
-    variations: [], tags: []
-  }
+    name: "",
+    description: "",
+    brand: "",
+    price: 0,
+    thumbnail: null,
+    images: [],
+    stock: 0,
+    variations: [],
+    tags: [],
+  };
 
   const clonedState = _.cloneDeep(initialState);
 
-  const [product, setProduct] = useState(clonedState);
+  const [product, setProduct] = useState(editProduct || initialState);
 
   const [selectOptions, setSelectOptions] = useState([
     {
@@ -120,10 +128,12 @@ const AddProduct = ({ productData }) => {
     }
   };
 
-  const uniqueCategories = [...new Set(Products.map(product => product.category))];
+  const uniqueCategories = [
+    ...new Set(Products.map((product) => product.category)),
+  ];
 
-  const category = uniqueCategories.map(category => ({
-    label: category
+  const category = uniqueCategories.map((category) => ({
+    label: category,
   }));
 
   const [tags, setTags] = useState(Tags);
@@ -164,8 +174,10 @@ const AddProduct = ({ productData }) => {
   };
 
   const getAttributesString = (attributes) => {
-    const availableAttributes = Object.values(attributes).filter(value => value);
-    return availableAttributes.join(' / ');
+    const availableAttributes = Object.values(attributes).filter(
+      (value) => value
+    );
+    return availableAttributes.join(" / ");
   };
 
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
@@ -189,33 +201,41 @@ const AddProduct = ({ productData }) => {
     }
   };
 
-  console.log({ product })
-  console.log({ initialState })
+  console.log({ product });
+  console.log({ initialState });
 
   const submitHandler = async () => {
     try {
-      const response = await axiosPrivate.post(productRoute, product)
-      const data = response?.data;
-
-      if (data?.success === true) {
-        toast.success("New Product Added")
+      let response;
+      if (editProduct) {
+        // Update existing product
+        response = await axiosPrivate.put(`${productRoute}/${editProduct._id}`, product);
+      } else {
+        // Create a new product
+        response = await axiosPrivate.post(productRoute, product);
       }
-
+  
+      const data = response?.data;
+      if (data?.success === true) {
+        toast.success(editProduct ? "Product Updated" : "New Product Added");
+      }
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      toast.error("Something went wrong!");
     }
-  }
+  };
+  
 
   const saveAndExit = async () => {
-    await submitHandler()
-    navigate("/catalog/product/manage")
-  }
+    await submitHandler();
+    navigate("/catalog/product/manage");
+  };
 
   const saveProduct = async () => {
-    await submitHandler()
+    await submitHandler();
     const clonedState = _.cloneDeep(initialState);
-    setProduct(clonedState)
-  }
+    setProduct(clonedState);
+  };
 
   return (
     <section>
@@ -248,7 +268,9 @@ const AddProduct = ({ productData }) => {
               <h2 className="sub_heading">Product Images</h2>
               <FileUpload
                 uploadedFiles={product?.images}
-                setUploadedFiles={(val) => setProduct((prev) => ({ ...prev, images: val }))}
+                setUploadedFiles={(val) =>
+                  setProduct((prev) => ({ ...prev, images: val }))
+                }
               />
             </div>
 
@@ -256,375 +278,14 @@ const AddProduct = ({ productData }) => {
               <h2 className="sub_heading">Thumbnail</h2>
               <FileUpload
                 uploadedFiles={product?.thumbnail ? [product?.thumbnail] : []}
-                setUploadedFiles={(val) => setProduct((prev) => ({ ...prev, thumbnail: val[val?.length - 1] }))}
+                setUploadedFiles={(val) =>
+                  setProduct((prev) => ({
+                    ...prev,
+                    thumbnail: val[val?.length - 1],
+                  }))
+                }
               />
             </div>
-
-            {/* <div className="content_item">
-              <h2 className="sub_heading">Pricing</h2>
-              <div className="column_2">
-                <Input
-                  type="text"
-                  placeholder="Enter the product SKU"
-                  icon={<Icons.TbHash />}
-                  label="SKU"
-                  value={product.sku}
-                  onChange={(value) => handleInputChange("sku", value)}
-                />
-              </div>
-              <div className="column_2">
-                <Input
-                  type="number"
-                  placeholder="Enter the product Price"
-                  icon={<Icons.TbCoin />}
-                  label="Price"
-                  value={product.price}
-                  onChange={(value) => handleInputChange("price", value)}
-                />
-              </div>
-
-              <div className="column_2">
-                <Input
-                  type="number"
-                  placeholder="Enter the product Price sale"
-                  icon={<Icons.TbCoin />}
-                  label="Price sale"
-                  value={product.priceSale}
-                  onChange={(value) => handleInputChange("priceSale", value)}
-                />
-              </div>
-
-              <div className="column_3">
-                <Input
-                  type="number"
-                  icon={<Icons.TbCoin />}
-                  placeholder="Cost Per Item"
-                  label="Cost Per Item"
-                  value={product.costPerItem}
-                  onChange={(value) => handleInputChange("costPerItem", value)}
-                />
-              </div>
-
-              <div className="column_3">
-                <Input
-                  type="number"
-                  placeholder="- -"
-                  label="Profit"
-                  readOnly={true}
-                  value={product.profit}
-                />
-              </div>
-
-              <div className="column_3">
-                <Input
-                  type="text"
-                  placeholder="- -"
-                  label="Margin"
-                  readOnly={true}
-                  value={`${product.margin ? product.margin.toFixed(2) : "- -"}%`}
-                />
-              </div>
-
-              <div className="column_3">
-                <Input
-                  type="text"
-                  placeholder="Enter Barcode"
-                  label="Barcode (ISBN, UPC, GTIN, etc.)"
-                  icon={<Icons.TbScan />}
-                  value={product.barcode}
-                  onChange={(value) => handleInputChange("barcode", value)}
-                />
-              </div>
-
-            </div> */}
-
-            {/* <div className="content_item">
-              <h2 className="sub_heading">
-                <span>Variations</span>
-                <Button
-                  label="add Variant"
-                  icon={<Icons.TbPlus />}
-                  onClick={openModal}
-                  className="sm"
-                />
-              </h2>
-
-              <table className="bordered">
-                <thead>
-                  <tr>
-                    <th>Variant</th>
-                    {Attributes.map((attribute, key) => (
-                      <th key={key}>{attribute.name}</th>
-                    ))}
-                    <th>Price</th>
-                    <th colSpan="2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Variations.map((variation, key) => (
-                    <tr key={key}>
-                      <td>{getAttributesString(variation.attributes)}</td>
-                      {Attributes.map((attribute) => (
-                        <td key={attribute.id}>
-                          {variation.attributes[attribute.name]
-                            ? variation.attributes[attribute.name]
-                            : "-"}
-                        </td>
-                      ))}
-                      <td>${variation.price.toFixed(2)}</td>
-                      <td className="td_action">
-                        <TableAction
-                          actionItems={actionItems}
-                          onActionItemClick={(item) =>
-                            handleActionItemClick(item, product.id)
-                          }
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <Offcanvas isOpen={isOffcanvasOpen} onClose={handleCloseOffcanvas} className="lg">
-                <div className="offcanvas-head">
-                  <h2>black / medium / polyester</h2>
-                </div>
-                <div className="offcanvas-body">
-                  <div className="content_item">
-                    <h2 className="sub_heading">Options</h2>
-                    <div className="column_3">
-                      <Input
-                        type="text"
-                        placeholder="Enter the product Price"
-                        className="sm"
-                        label="Color"
-                        icon={<Icons.TbTrash className="trash" />}
-                        value="Black"
-                      // onChange={(value) => handleInputChange("price", value)}
-                      />
-                    </div>
-                    <div className="column_3">
-                      <Input
-                        type="text"
-                        placeholder="Enter the product Price sale"
-                        className="sm"
-                        label="Size"
-                        icon={<Icons.TbTrash className="trash" />}
-                        value="Medium"
-                      // onChange={(value) => handleInputChange("priceSale", value)}
-                      />
-                    </div>
-                    <div className="column_3">
-                      <Input
-                        type="text"
-                        placeholder="Enter the product Price sale"
-                        className="sm"
-                        label="Material"
-                        icon={<Icons.TbTrash className="trash" />}
-                        value="Polyester"
-                      // onChange={(value) => handleInputChange("priceSale", value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="content_item">
-                    <h2 className="sub_heading">Pricing</h2>
-                    <div className="column_2">
-                      <Input
-                        type="number"
-                        placeholder="Enter the product Price"
-                        className="sm"
-                        label="Variant Price"
-                      // value={product.price}
-                      // onChange={(value) => handleInputChange("price", value)}
-                      />
-                    </div>
-                    <div className="column_2">
-                      <Input
-                        type="number"
-                        placeholder="Enter the product Price sale"
-                        className="sm"
-                        label="Variant Price sale"
-                      // value={product.priceSale}
-                      // onChange={(value) => handleInputChange("priceSale", value)}
-                      />
-                    </div>
-                    <div className="column_3">
-                      <Input
-                        type="number"
-                        placeholder="Cost Per Item"
-                        className="sm"
-                        label="Variant Cost Per Item"
-                      // value={product.costPerItem}
-                      // onChange={(value) => handleInputChange("costPerItem", value)}
-                      />
-                    </div>
-                    <div className="column_3">
-                      <Input
-                        type="number"
-                        placeholder="- -"
-                        className="sm"
-                        label="Variant Profit"
-                        readOnly={true}
-                        value={product.profit}
-                      />
-                    </div>
-                    <div className="column_3">
-                      <Input
-                        type="text"
-                        placeholder="- -"
-                        className="sm"
-                        label="Variant Margin"
-                        readOnly={true}
-                        value={`${product.margin ? product.margin : "- -"}%`}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="offcanvas-footer">
-                  <Button
-                    label="close"
-                    className="outline"
-                    onClick={handleCloseOffcanvas}
-                  />
-                  <Button
-                    label="save"
-                    className=""
-                    onClick={handleCloseOffcanvas}
-                  />
-                </div>
-              </Offcanvas>
-
-              <Modal bool={isModalOpen} onClose={closeModal} className="sm">
-                <div className="modal-head">
-                  <h2>add variation</h2>
-                </div>
-                <div className="modal-body">
-
-                  <div className="content_item">
-                    <div className="column">
-                      <Dropdown
-                        placeholder="select attribute"
-                        label="Select attribute"
-                        selectedValue={selectedValue.attribute}
-                        onClick={handleAttributeSelect}
-                        options={attributeOption}
-                        className="sm"
-                      />
-                    </div>
-                    <Divider label={`${selectedValue.attribute} options`}>
-                      <Button label="add option" className="right text" />
-                    </Divider>
-                    <div className="column">
-                      <Input
-                        type="text"
-                        icon={<Icons.TbTrash className="trash" />}
-                        placeholder="Enter the product option"
-                        className="sm"
-                      // value={product.sku}
-                      // onChange={(value) => handleInputChange("sku", value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <Button
-                    label="discard"
-                    onClick={closeModal}
-                    className="sm outline"
-                  />
-                  <Button
-                    label="save"
-                    onClick={closeModal}
-                    className="sm"
-                  />
-                </div>
-              </Modal>
-            </div> */}
-
-            {/* <div className="content_item">
-              <h2 className="sub_heading">Add Question</h2>
-              <div className="column">
-                <Input
-                  type="text"
-                  placeholder="Enter the question"
-                  icon={<Icons.TbQuestionMark />}
-                  label="Question"
-                  value={product.question}
-                  onChange={(value) => handleInputChange("question", value)}
-                />
-              </div>
-              <div className="column">
-                <Textarea
-                  type="text"
-                  placeholder="Enter the Answer"
-                  icon={<Icons.TbCircleCheck />}
-                  label="Answer"
-                  value={product.answer}
-                  onChange={(value) => handleInputChange("answer", value)}
-                />
-              </div>
-
-              <Button
-                label="Add Question"
-                icon={<Icons.TbCheck />}
-                className="sm right"
-                onClick={handleFaqQuestion}
-              />
-            </div> */}
-
-            {/* {!faqs.length == 0 ? (
-              <div className="content_item">
-                <h2 className="sub_heading">FAQ's</h2>
-                {faqs.map((faq, key) => {
-                  return (
-                    <div className="column" key={key}>
-                      <Accordion title={faq.question}>
-                        <p>{faq.answer}</p>
-                      </Accordion>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              ""
-            )} */}
-
-            {/* <div className="content_item meta_data">
-              <div className="column">
-                <span>Search engine listing</span>
-                <h2 className="meta_title">{product.metaTitle || product.name}</h2>
-                <p className="meta_link">{product.metaLink}</p>
-                <p className="meta_description">{product.metaDescription || product.description}</p>
-              </div>
-              <div className="column">
-                <Input
-                  type="text"
-                  placeholder="Enter the meta title"
-                  label="Title"
-                  value={product.metaTitle || product.name}
-                  onChange={(value) => handleInputChange("metaTitle", value)}
-                />
-              </div>
-              <div className="column">
-                <Input
-                  type="text"
-                  placeholder="Enter the meta link"
-                  label="Link"
-                  value={`${product.metaLink}/${product.metaTitle || product.name}`}
-                  onChange={(value) => handleInputChange("metaLink", value)}
-                />
-              </div>
-              <div className="column">
-                <Textarea
-                  type="text"
-                  placeholder="Enter the meta description"
-                  label="Description"
-                  value={product.metaDescription || product.description}
-                  onChange={(value) => handleInputChange("metaDescription", value)}
-                />
-              </div>
-            </div> */}
-
           </div>
           <div className="sidebar">
             <div className="sidebar_item">
@@ -632,41 +293,17 @@ const AddProduct = ({ productData }) => {
               <Button
                 label="save & exit"
                 icon={<Icons.TbDeviceFloppy />}
-                className=""
+                className="success"
                 onClick={saveAndExit}
               />
 
-              <Button
+              {/* <Button
                 label="save"
                 icon={<Icons.TbCircleCheck />}
-                className="success"
+                className=""
                 onClick={saveProduct}
-              />
-
+              /> */}
             </div>
-
-            {/* <div className="sidebar_item">
-              <h2 className="sub_heading">Stock status</h2>
-              <div className="column">
-                <Dropdown
-                  placeholder="select stock status"
-                  selectedValue={selectedValue.stockValue}
-                  onClick={handleStockSelect}
-                  options={selectOptions}
-                  className="sm"
-                />
-              </div>
-            </div> */}
-
-            {/* <div className="sidebar_item">
-              <h2 className="sub_heading">Categories</h2>
-              <MultiSelect
-                className="sm"
-                isMulti={true}
-                options={category}
-                placeholder="Select options..."
-              />
-            </div> */}
 
             <div className="sidebar_item">
               <h2 className="sub_heading">
@@ -677,7 +314,9 @@ const AddProduct = ({ productData }) => {
                   type="number"
                   placeholder="Enter the price"
                   value={product.price}
-                  onChange={(value) => handleInputChange("price", parseFloat(value))}
+                  onChange={(value) =>
+                    handleInputChange("price", parseFloat(value))
+                  }
                   className="sm"
                 />
               </div>
@@ -692,70 +331,24 @@ const AddProduct = ({ productData }) => {
                   type="number"
                   placeholder="Enter the product quantity"
                   value={product.stock}
-                  onChange={(value) => handleInputChange("stock", parseInt(value))}
+                  onChange={(value) =>
+                    handleInputChange("stock", parseInt(value))
+                  }
                   className="sm"
                 />
               </div>
             </div>
-
-            {/* <div className="sidebar_item">
-              <h2 className="sub_heading">Taxes</h2>
-              <div className="sidebar_checkboxes">
-                {taxes.map((tax) => (
-                  <CheckBox
-                    key={tax.id}
-                    id={tax.id}
-                    label={`${tax.name} ${tax.percentage}`}
-                    isChecked={tax.isChecked}
-                    onChange={(isChecked) => handleCheckTax(tax.id, isChecked)}
-                  />
-                ))}
-              </div>
-            </div> */}
-
-            {/* <div className="sidebar_item">
-              <h2 className="sub_heading">Product collections</h2>
-              <div className="sidebar_checkboxes">
-                {colloctions.map((collection) => (
-                  <CheckBox
-                    key={collection.id}
-                    id={collection.id}
-                    label={`${collection.name}`}
-                    isChecked={collection.isChecked}
-                    onChange={(isChecked) =>
-                      handleCheckCollection(collection.id, isChecked)
-                    }
-                  />
-                ))}
-              </div>
-            </div> */}
-
-            {/* <div className="sidebar_item">
-              <h2 className="sub_heading">Labels</h2>
-              <div className="sidebar_checkboxes">
-                {labels.map((label) => (
-                  <CheckBox
-                    key={label.id}
-                    id={label.id}
-                    label={`${label.name}`}
-                    isChecked={label.isChecked}
-                    onChange={(isChecked) =>
-                      handleCheckLabels(label.id, isChecked)
-                    }
-                  />
-                ))}
-              </div>
-            </div> */}
 
             <div className="sidebar_item">
               <h2 className="sub_heading">tags</h2>
               <Tagify
                 tagsData={Tags}
                 tags={product.tags}
-                setTags={(val) => setProduct((prev) => ({ ...prev, tags: val }))}
+                setTags={(val) =>
+                  setProduct((prev) => ({ ...prev, tags: val }))
+                }
               />
             </div>
-
           </div>
         </div>
       </div>
