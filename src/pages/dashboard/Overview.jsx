@@ -18,7 +18,7 @@ const Overview = () => {
 	const [orderStatus, setOrdersStatus] = useState({});
 	const [loading, setLoading] = useState(false);
 
-	const dummyImage = '../../assets/dummy1.jpg'
+	const dummyImage = '/public/dummy.png'
 
 	const getData = async () => {
 		setLoading(true)
