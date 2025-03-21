@@ -49,7 +49,7 @@ const ManageCategories = () => {
   });
 
   const [products, setProducts] = useState([]);
-  const dummyImage = "/public/dummy.jpg"
+  const dummyImage = "../../../public/dummy.png"
 
   const handleInputChange = (key, value) => {
     setCategories({
