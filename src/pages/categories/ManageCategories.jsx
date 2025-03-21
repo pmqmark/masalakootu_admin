@@ -11,13 +11,13 @@ import Thumbnail from "../../components/common/Thumbnail.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import TableSkeleton from "../../components/common/TableSkeleton.jsx";
 // import * as Icons from "react-icons/tb";
 // import Categories from "../../api/Categories.json";
 // import Pagination from "../../components/common/Pagination.jsx";
 // import Toggler from "../../components/common/Toggler.jsx";
 import { categoryRoute, getAllProducts } from "../../lib/endPoints.js";
 import { toast } from "sonner";
-import TableSkeleton from "../../components/common/TableSkeleton.jsx";
 
 const ManageCategories = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -44,7 +44,8 @@ const ManageCategories = () => {
     productIds: [],
   });
 
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState([]);
+  const dummyImage = "/public/dummy.jpg"
 
   const handleInputChange = (key, value) => {
     setCategories({
@@ -336,7 +337,7 @@ const ManageCategories = () => {
                             </td>
                             <td className="td_id">{key + 1}</td>
                             <td className="td_image">
-                              <img src={category?.image?.location || "/public/dummy.jpg"} alt={category.image?.name} />
+                              <img src={category?.image?.location || dummyImage} alt={category.image?.name} />
                             </td>
                             <td>
                               <Link to={category._id}>{category.name}</Link>
