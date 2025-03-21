@@ -5,7 +5,7 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, itemID }) => {
   if (!isOpen) return null; // Don't render if not open
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96 text-center">
         <FaTrashAlt className="text-red-500 text-4xl mx-auto mb-3" />
         <h2 className="text-xl font-semibold">Confirm Deletion</h2>

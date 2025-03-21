@@ -16,8 +16,9 @@ import TableSkeleton from "../../components/common/TableSkeleton.jsx";
 // import Categories from "../../api/Categories.json";
 // import Pagination from "../../components/common/Pagination.jsx";
 // import Toggler from "../../components/common/Toggler.jsx";
-import { categoryRoute, getAllProducts } from "../../lib/endPoints.js";
+import { archiveCategory, categoryRoute, getAllProducts } from "../../lib/endPoints.js";
 import { toast } from "sonner";
+import ConfirmDeleteModal from "../../components/common/ConfirmDeleteModal.jsx";
 
 const ManageCategories = () => {
   const axiosPrivate = useAxiosPrivate();
@@ -26,6 +27,9 @@ const ManageCategories = () => {
   const navigate = useNavigate();
   const [bulkCheck, setBulkCheck] = useState(false);
   const [specificChecks, setSpecificChecks] = useState({});
+  // edit category
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItemID, setSelectedItemID] = useState(null);
 
   // ------Pagination----------
   // const [currentPage, setCurrentPage] = useState(1);
@@ -129,15 +133,19 @@ const ManageCategories = () => {
     });
   };
 
-  const actionItems = ["Delete", "edit"];
+  const actionItems = ["Delete", "Enable", "edit"];
 
   const handleActionItemClick = (item, itemID) => {
-    var updateItem = item?.toLowerCase()
-    if (updateItem === "delete") {
-      alert(`#${itemID} item delete`)
+    var updateItem = item?.toLowerCase();
+
+    console.log(updateItem)
+    if (updateItem === "delete" || updateItem === "enable") {
+      setSelectedItemID(itemID);
+      setIsModalOpen(true);
     }
     else if (updateItem === "edit") {
-      navigate(`/catalog/categories/manage/${itemID}`)
+      // navigate(`/catalog/categories/manage/${itemID}`)
+      toast.warning("Please Contact Your Developer Team")
     }
   };
 
@@ -145,7 +153,8 @@ const ManageCategories = () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(`${categoryRoute}/all`);
-      setCats(res?.data?.data?.result)
+      const data = res?.data?.data?.result.filter((item)=> !item?.isArchived)
+      setCats(data)
     } catch (error) {
       console.log(error)
     } finally {
@@ -206,52 +215,93 @@ const ManageCategories = () => {
     }
   }
 
-  console.log(cats)
+  const handleDeleteConfirm = async () => {
+    try {
+      // Find the selected product before updating the state
+      const selectedProduct = cats.find((p) => p._id === selectedItemID);
+      const newStatus = selectedProduct?.isArchived ? "unarchived" : "archived";
+
+      // console.log(newStatus,selectedProduct,products,selectedItemID)
+      // Optimistically update the UI
+      // setCats((prevProducts) =>
+      //   prevProducts.map((p) =>
+      //     p._id === selectedItemID ? { ...p, isArchived: !p.isArchived } : p
+      //   )
+      // );
+
+      // Send the request to update the status
+      const response = await axiosPrivate.patch(`${archiveCategory}/${selectedItemID}`, {
+        status: newStatus,
+      });
+
+
+      console.log(response?.data)
+      if (response.status === 201) {
+        toast.success(`Product ${newStatus} successfully!`);
+        getCats()
+      }
+
+      console.log(response)
+    } catch (error) {
+      console.error("Error updating product status:", error);
+      toast.error("Failed to update product status.");
+    } finally {
+      setIsModalOpen(false); // Close modal after action
+    }
+  };
 
   return (
-    <section className="categories">
-      <div className="container">
-        <div className="wrapper flex flex-col md:flex-row">
-          {/* category  */}
-          <div className="sidebar">
-            <div className="sidebar_item">
-              <h2 className="sub_heading">add category</h2>
-              <div className="column">
-                <Thumbnail setImage={handleInputChange} />
-              </div>
-              <div className="column">
-                <Input
-                  type="text"
-                  placeholder="Enter the fields name"
-                  label="Name"
-                  required
-                  value={fields.name}
-                  onChange={(value) => handleInputChange("name", value)}
-                />
-              </div>
-              <div className="column">
-                <Textarea
-                  type="text"
-                  placeholder="Description"
-                  label="Description"
-                  value={fields.description}
-                  onChange={(value) => handleInputChange("description", value)}
-                />
-              </div>
-              <Divider />
+    <>
+      {/* conformation modal */}
+      <ConfirmDeleteModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        itemID={selectedItemID}
+      />
+      <section className="categories">
+        <div className="container">
+          <div className="wrapper flex flex-col md:flex-row">
+            {/* category  */}
+            <div className="sidebar">
+              <div className="sidebar_item">
+                <h2 className="sub_heading">add category</h2>
+                <div className="column">
+                  <Thumbnail setImage={handleInputChange} />
+                </div>
+                <div className="column">
+                  <Input
+                    type="text"
+                    placeholder="Enter the fields name"
+                    label="Name"
+                    required
+                    value={fields.name}
+                    onChange={(value) => handleInputChange("name", value)}
+                  />
+                </div>
+                <div className="column">
+                  <Textarea
+                    type="text"
+                    placeholder="Description"
+                    label="Description"
+                    value={fields.description}
+                    onChange={(value) => handleInputChange("description", value)}
+                  />
+                </div>
+                <Divider />
 
-              <div className="column">
-                <MultiSelect
-                  label="Select Products"
-                  placeholder="Select Products"
-                  onChange={selectProducts}
-                  isMulti={true}
-                  options={products}
-                  isSelected={null}
-                />
-              </div>
+                <div className="column">
+                  <MultiSelect
+                    label="Select Products"
+                    placeholder="Select Products"
+                    onChange={selectProducts}
+                    isMulti={true}
+                    options={products}
+                    isSelected={null}
+                  />
+                </div>
 
-              {/* <div className="column">
+                {/* <div className="column">
                 <Dropdown
                   label="Status"
                   placeholder="Select Status"
@@ -269,113 +319,113 @@ const ManageCategories = () => {
                 />
               </div> */}
 
-              <Divider />
-              <Button
-                label="Discard"
-                className="right text-white border-none bg-red-500"
-              />
-              <Button
-                label="save"
-                className="text-white bg-green-600 border-none"
-                onClick={submitHandler}
-              />
+                <Divider />
+                <Button
+                  label="Discard"
+                  className="right text-white border-none bg-red-500"
+                />
+                <Button
+                  label="save"
+                  className="text-white bg-green-600 border-none"
+                  onClick={submitHandler}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* table */}
-          <div className="content transparent">
-            <div className="flex justify-between w-full">
-              <Dropdown
-                placeholder="Bulk Action"
-                className="sm"
-                onClick={bulkActionDropDown}
-                options={bulkAction}
-              />
-              <Input
-                placeholder="Search Categories..."
-                className="sm table_search"
-              />
-              {/* <div className="btn_parent">
+            {/* table */}
+            <div className="content transparent">
+              <div className="flex justify-between w-full">
+                <Dropdown
+                  placeholder="Bulk Action"
+                  className="sm"
+                  onClick={bulkActionDropDown}
+                  options={bulkAction}
+                />
+                <Input
+                  placeholder="Search Categories..."
+                  className="sm table_search"
+                />
+                {/* <div className="btn_parent">
                 <Link to="/catalog/category/add" className="sm button">
                   <Icons.TbPlus />
                   <span>Create Categories</span>
                 </Link>
               </div> */}
-            </div>
-            <div className="content_body">
-              <div className="table_responsive">
-                <table className="separate">
-                  <thead>
-                    <tr>
-                      <th className="td_checkbox">
-                        <CheckBox
-                          onChange={handleBulkCheckbox}
-                          isChecked={bulkCheck}
-                        />
-                      </th>
-                      <th className="td_id">id</th>
-                      <th className="td_image">image</th>
-                      <th>name</th>
-                      <th className="td_order">Description</th>
-                      <th className="td_status">status</th>
-                      <th>created at</th>
-                      <th className="td_action">actions</th>
-                    </tr>
-                  </thead>
-                  {isLoading ? (
-                    <TableSkeleton ColumnCount={8} />
-                  ) : (
-                    <tbody>
-                      {cats.map((category, key) => {
-                        return (
-                          <tr key={key}>
-                            <td className="td_checkbox">
-                              <CheckBox
-                                onChange={(isCheck) =>
-                                  handleCheckCategory(isCheck, category.id)
-                                }
-                                isChecked={specificChecks[category.id] || false}
-                              />
-                            </td>
-                            <td className="td_id">{key + 1}</td>
-                            <td className="td_image">
-                              <img src={category?.image?.location || dummyImage} alt={category.image?.name} />
-                            </td>
-                            <td>
-                              <Link to={category._id}>{category.name}</Link>
-                            </td>
-                            <td className="td_order truncate max-w-[200px]">{category.description}</td>
-                            <td className="td_status">
-                              {category.isArchived ? (
-                                <Badge
-                                  label={`Archived`}
-                                  className="light-danger"
-                                />
-                              ) : (
-                                <Badge
-                                  label={`Active`}
-                                  className="light-success"
-                                />
-                              )}
-                            </td>
-                            <td>{category.createdAt?.split('T')[0] ?? 'NIL'}</td>
-                            <td className="td_action">
-                              <TableAction
-                                actionItems={actionItems}
-                                onActionItemClick={(item) =>
-                                  handleActionItemClick(item, category.id)
-                                }
-                              />
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  )}
-                </table>
               </div>
-            </div>
-            {/* <div className="content_footer">
+              <div className="content_body">
+                <div className="table_responsive">
+                  <table className="separate">
+                    <thead>
+                      <tr>
+                        <th className="td_checkbox">
+                          <CheckBox
+                            onChange={handleBulkCheckbox}
+                            isChecked={bulkCheck}
+                          />
+                        </th>
+                        <th className="td_id">id</th>
+                        <th className="td_image">image</th>
+                        <th>name</th>
+                        <th className="td_order">Description</th>
+                        <th className="td_status">status</th>
+                        <th>created at</th>
+                        <th className="td_action">actions</th>
+                      </tr>
+                    </thead>
+                    {isLoading ? (
+                      <TableSkeleton ColumnCount={8} />
+                    ) : (
+                      <tbody>
+                        {cats.map((category, key) => {
+                          return (
+                            <tr key={key}>
+                              <td className="td_checkbox">
+                                <CheckBox
+                                  onChange={(isCheck) =>
+                                    handleCheckCategory(isCheck, category.id)
+                                  }
+                                  isChecked={specificChecks[category.id] || false}
+                                />
+                              </td>
+                              <td className="td_id">{key + 1}</td>
+                              <td className="td_image">
+                                <img src={category?.image?.location || dummyImage} alt={category.image?.name} />
+                              </td>
+                              <td>
+                                <Link to={category._id}>{category.name}</Link>
+                              </td>
+                              <td className="td_order truncate max-w-[200px]">{category.description}</td>
+                              <td className="td_status">
+                                {category.isArchived ? (
+                                  <Badge
+                                    label={`Archived`}
+                                    className="light-danger"
+                                  />
+                                ) : (
+                                  <Badge
+                                    label={`Active`}
+                                    className="light-success"
+                                  />
+                                )}
+                              </td>
+                              <td>{category.createdAt?.split('T')[0] ?? 'NIL'}</td>
+                              <td className="td_action">
+                                <TableAction
+                                  actionItems={category?.isArchived ? ["Enable", "edit"] : ["Delete", "edit"]}
+                                  onActionItemClick={(item) =>
+                                    handleActionItemClick(item, category._id)
+                                  }
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    )}
+                  </table>
+                </div>
+              </div>
+              {/* <div className="content_footer">
               <Dropdown
                 className="top show_rows sm"
                 placeholder="please select"
@@ -389,10 +439,11 @@ const ManageCategories = () => {
                 onPageChange={onPageChange}
               />
             </div> */}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

@@ -60,20 +60,20 @@ const navigation = [
   // Customers
   {
     name: "Customers",
-    url: "/customers",
+    url: "/customers/manage",
     icon: <Icons.TbUsers className="menu_icon" />,
-    subMenu: [
-      {
-        name: "Manage Customers",
-        url: "/manage",
-        icon: <Icons.TbList className="menu_icon" />,
-      },
-      {
-        name: "add Customers",
-        url: "/add",
-        icon: <Icons.TbCirclePlus className="menu_icon" />,
-      },
-    ]
+    // subMenu: [
+    //   {
+    //     name: "Manage Customers",
+    //     url: "/manage",
+    //     icon: <Icons.TbList className="menu_icon" />,
+    //   },
+    //   {
+    //     name: "add Customers",
+    //     url: "/add",
+    //     icon: <Icons.TbCirclePlus className="menu_icon" />,
+    //   },
+    // ]
   },
   // Reviews
   // {

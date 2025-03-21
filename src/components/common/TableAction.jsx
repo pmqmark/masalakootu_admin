@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as Icons from "react-icons/tb";
 
 const TableAction = ({ actionItems, onActionItemClick }) => {

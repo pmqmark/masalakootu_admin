@@ -14,14 +14,18 @@ export const loginAuth = "auth/login";
 // Products
 export const getAllProducts = "products/all";
 export const archiveStatus = "products";
+export const productRoute = "products";
 
-export const categoryRoute = "categories"
+// Category API
+export const categoryRoute = "categories";
+export const archiveCategory = "categories"; //:id
 
-export const orderRoute = "orders"
+// Order API
+export const orderRoute = "orders";
 
-export const usersRoute = "users"
+// User API
+export const usersRoute = "users";
 
-export const uploadMultiFilesRoute = "uploads/multiple"
-export const uploadSingleFilesRoute = "uploads/single"
-
-export const productRoute = "products"
+// Common API
+export const uploadMultiFilesRoute = "uploads/multiple";
+export const uploadSingleFilesRoute = "uploads/single";

@@ -2,7 +2,7 @@ import * as Icons from "react-icons/tb";
 import Orders from '../../api/Orders.json';
 import Reviews from '../../api/Reviews.json';
 import country from '../../api/country.json';
-import {useParams, Link} from 'react-router-dom'
+import {useParams, Link, useNavigate} from 'react-router-dom'
 import Customers from '../../api/Customers.json';
 import React, { useState, useEffect } from "react";
 import Modal from "../../components/common/Modal.jsx";
@@ -21,20 +21,21 @@ import TableAction from "../../components/common/TableAction.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
 
 const EditCustomer = () => {
+   const navigate = useNavigate();
   const { customerId } = useParams();
 
   const customer = Customers.find(customer => customer.id.toString() === customerId.toString());
 
   const [fields, setFields] = useState({
-    name: customer.name,
-    email: customer.contact.email,
-    phone: customer.contact.phone,
-    date: customer.dob,
+    name: customer?.name,
+    email: customer?.contact.email,
+    phone: customer?.contact.phone,
+    date: customer?.dob,
     password: "",
     passwordConfirm: "",
-    isVendor: customer.isVendor,
-    status: customer.status,
-    image: customer.image,
+    isVendor: customer?.isVendor,
+    status: customer?.status,
+    image: customer?.image,
     addressName:"",
     addressPhone:"",
     addressZip:"",
@@ -107,7 +108,7 @@ const EditCustomer = () => {
   return (
     <section>
       <div className="container">
-        <div className="wrapper">
+        <div className="wrapper flex flex-col lg:flex-row">
           <div className="content">
             <div className="content_item">
               <h2 className="sub_heading">Detail</h2>
@@ -291,7 +292,7 @@ const EditCustomer = () => {
                 </div>
               </Offcanvas>
               {
-                customer.addresses.map((address, key)=>(
+                customer?.addresses?.map((address, key)=>(
                   <div className="column" key={key}>
                     <Accordion title={`#${key < 9 ? `0${key+1}` : key+1} Address`}>
                       <table className="bordered">
@@ -396,7 +397,7 @@ const EditCustomer = () => {
                 </div>
               </div>
             </div>
-            <div className="content_item">
+            {/* <div className="content_item">
               <h2 className="sub_heading">reviews</h2>
               <div className="column">
                 <table className="bordered">
@@ -464,11 +465,11 @@ const EditCustomer = () => {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </div> */}
           </div>
-          <div className="sidebar">
-            <div className="sidebar_item">
-              <h2 className="sub_heading">Publish</h2>
+          <div className="sidebar flex">
+            {/* <div className="sidebar_item">
+              <h2 className="sub_heading">Action</h2>
               <Button
                 label="save & exit"
                 icon={<Icons.TbDeviceFloppy />}
@@ -479,7 +480,7 @@ const EditCustomer = () => {
                 icon={<Icons.TbCircleCheck />}
                 className="success"
               />
-            </div>
+            </div> */}
             <div className="sidebar_item">
               <h2 className="sub_heading">Status</h2>
               <div className="column">
@@ -493,7 +494,7 @@ const EditCustomer = () => {
               </div>
             </div>
             <div className="sidebar_item">
-              <h2 className="sub_heading">Image</h2>
+              <h2 className="sub_heading">Profile Picture</h2>
               <div className="column">
                 <Thumbnail
                   preloadedImage={fields.image}
