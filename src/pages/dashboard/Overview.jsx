@@ -15,64 +15,13 @@ const Overview = () => {
 	const [metrics, setMetrics] = useState({});
 	const [recentOrder, setRecentOrder] = useState();
 	const [areaData, setAreaData] = useState({});
+	const [bestProds, setBestProds] = useState([])
 	const [orders, setOrders] = useState({});
 	const [orderStatus, setOrdersStatus] = useState({});
 	const [loading, setLoading] = useState(false);
 
 	const dummyImage = '../../../public/dummy.png'
 
-	const getData = async () => {
-		setLoading(true)
-		try {
-			const results = await Promise.allSettled([
-				axiosPrivate.get(getAllMetrics),
-				axiosPrivate.get(getOrderStatus),
-				axiosPrivate.get(getRecentOrder),
-				axiosPrivate.get(`${orderRoute}/all`),
-				axiosPrivate.get(getSaleAnalytics),
-			]);
-
-			if (results[0].status === "fulfilled") {
-				// console.log(results[0].value.data?.data)
-				setMetrics(results[0].value.data?.data);
-			} else {
-				console.error("Failed to fetch user:", results[0]?.reason);
-			}
-
-			if (results[1].status === "fulfilled") {
-				// console.log(results[1].value.data?.data?.orderStatusesAndCounts)
-				setOrdersStatus(results[1].value.data?.data?.orderStatusesAndCounts);
-			} else {
-				console.error("Failed to fetch orders:", results[1]?.reason);
-			}
-
-			if (results[2].status === "fulfilled") {
-				// console.log(results[2].value.data?.data?.result)
-				setOrders(results[2].value.data?.data?.result);
-			} else {
-				console.error("Failed to fetch notifications:", results[2]?.reason);
-			}
-			if (results[3].status === "fulfilled") {
-				// console.log(results[3].value.data?.data)
-				const orders = results[3].value?.data?.data?.orders;
-				setRecentOrder(Array.isArray(orders) ? orders.slice(0, 15) : []);
-			} else {
-				console.error("Failed to fetch notifications:", results[3]?.reason);
-			}
-			if (results[4].status === "fulfilled") {
-				// console.log(results[4].value.data?.data)
-				const result = results[4].value?.data?.data?.result;
-				setAreaData(result);
-			} else {
-				console.error("Failed to fetch notifications:", results[4]?.reason);
-			}
-
-		} catch (error) {
-			console.log(error)
-		} finally {
-			setLoading(false)
-		}
-	}
 
 	const getAllData = async () => {
 		try {
@@ -89,6 +38,7 @@ const Overview = () => {
 				setMetrics(metrics_data)
 				setRecentOrder(recent_orders)
 				setAreaData(sale_analytics)
+				setBestProds(best_prods)
 			}
 
 		} catch (error) {
@@ -99,7 +49,6 @@ const Overview = () => {
 	}
 
 	useEffect(() => {
-		// getData()
 		getAllData()
 	}, [])
 
@@ -157,23 +106,25 @@ const Overview = () => {
 										<th>Name</th>
 										<th>Category</th>
 										<th>Price</th>
-										<th>Status</th>
 										<th>Quantity</th>
+										{/* <th>Status</th> */}
 									</tr>
 								</thead>
 								<tbody>
-									{Products.map((product, key) => (
+									{bestProds.map((product, key) => (
 										<tr key={key}>
 											<td>
 												<Profile
-													src={product.images.thumbnail}
-													slogan={product.category}
-													name={product.name}
+													src={product?.thumbnail?.location ?? dummyImage}
+													slogan={product.category ?? "N/A"}
+													name={product.productName
+													}
 												/>
 											</td>
-											<td>{product.category}</td>
-											<td>${product.price}</td>
-											<td>
+											<td>{product.category ?? "N/A"}</td>
+											<td>₹{product.price}</td>
+											<td>{product.totalQuantity}</td>
+											{/* <td>
 												{product.inventory.in_stock ? (
 													<Badge
 														label="In Stock"
@@ -191,8 +142,7 @@ const Overview = () => {
 														className="light-danger"
 													/>
 												)}
-											</td>
-											<td>{product.inventory.quantity}</td>
+											</td> */}
 										</tr>
 									))}
 								</tbody>
@@ -217,7 +167,7 @@ const Overview = () => {
 											<p className="recent_order_category">{product?.name}</p>
 										</div>
 										<div className="recent_order_details">
-											<h5 className="recent_order_price">${product?.price}</h5>
+											<h5 className="recent_order_price">₹{product?.price}</h5>
 											<p className="recent_order_quantity">items: {product?.quantity}</p>
 										</div>
 									</Link>
