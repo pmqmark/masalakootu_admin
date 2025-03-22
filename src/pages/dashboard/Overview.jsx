@@ -8,7 +8,7 @@ import Button from '../../components/common/Button.jsx';
 import Profile from '../../components/common/Profile.jsx';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate.js';
-import { getAllMetrics, getOrderStatus, getRecentOrder, getSaleAnalytics, orderRoute } from '../../lib/endPoints.js';
+import { bestProdsRoute, dashboardRoute, getAllMetrics, getOrderStatus, getRecentOrder, getSaleAnalytics, orderRoute } from '../../lib/endPoints.js';
 
 const Overview = () => {
 	const axiosPrivate = useAxiosPrivate();
@@ -29,7 +29,7 @@ const Overview = () => {
 				axiosPrivate.get(getOrderStatus),
 				axiosPrivate.get(getRecentOrder),
 				axiosPrivate.get(`${orderRoute}/all`),
-				axiosPrivate.get(getSaleAnalytics)
+				axiosPrivate.get(getSaleAnalytics),
 			]);
 
 			if (results[0].status === "fulfilled") {
@@ -74,8 +74,33 @@ const Overview = () => {
 		}
 	}
 
+	const getAllData = async () => {
+		try {
+			setLoading(true)
+			const response = await axiosPrivate.get(dashboardRoute)
+
+			if (response.data?.success === true) {
+				const { metrics_data,
+					recent_orders,
+					recent_users,
+					best_prods,
+					sale_analytics } = response.data?.data;
+
+				setMetrics(metrics_data)
+				setRecentOrder(recent_orders)
+				setAreaData(sale_analytics)
+			}
+
+		} catch (error) {
+			console.log(error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
 	useEffect(() => {
-		getData()
+		// getData()
+		getAllData()
 	}, [])
 
 	console.log(recentOrder)
@@ -124,7 +149,7 @@ const Overview = () => {
 							</h2>
 							<Area data={areaData} />
 						</div>
-						{/* <div className="content_item">
+						<div className="content_item">
 							<h2 className="sub_heading">Best selling products</h2>
 							<table className="simple">
 								<thead>
@@ -172,7 +197,7 @@ const Overview = () => {
 									))}
 								</tbody>
 							</table>
-						</div> */}
+						</div>
 					</div>
 					<div className="sidebar">
 						{/* <div className="sidebar_item">
@@ -180,20 +205,20 @@ const Overview = () => {
 							<Bar />
 						</div> */}
 						<div className="sidebar_item">
-							<h2 className="sub_heading">Order Recently</h2>
+							<h2 className="sub_heading">Recent Orders</h2>
 							<div className="recent_orders column">
 								{recentOrder?.map((product, key) => (
 									<Link key={key} to={`/orders/manage/${product?._id}`} className="recent_order">
 										<figure className="recent_order_img">
-											<img src={product?.items[0]?.thumbnail?.location ? product?.items[0]?.thumbnail?.location : dummyImage} alt="" />
+											<img src={product?.thumbnail?.location ? product?.thumbnail?.location : dummyImage} alt="" />
 										</figure>
 										<div className="recent_order_content">
-											<h4 className="recent_order_title">{product?.items[0]?.name}</h4>
-											<p className="recent_order_category">{product?.payMode}</p>
+											<h4 className="recent_order_title">{product?.name}</h4>
+											<p className="recent_order_category">{product?.name}</p>
 										</div>
 										<div className="recent_order_details">
-											<h5 className="recent_order_price">${product?.amount}</h5>
-											<p className="recent_order_quantity">items: {product?.items?.length}</p>
+											<h5 className="recent_order_price">${product?.price}</h5>
+											<p className="recent_order_quantity">items: {product?.quantity}</p>
 										</div>
 									</Link>
 								))}

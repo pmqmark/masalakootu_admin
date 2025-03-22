@@ -1,6 +1,6 @@
 export let BASE_URL = "";
 
-const is_development = false;
+const is_development = true;
 
 if (is_development) {
   BASE_URL = "http://localhost:8080/api/";
@@ -38,5 +38,8 @@ export const getAllMetrics = "dashboard/metrics";
 export const getOrderStatus = "dashboard/order-status-count";
 export const getRecentOrder = "dashboard/recent-orders";
 export const getSaleAnalytics = "dashboard/sale-analytics"
+export const bestProdsRoute = "dashboard/best-selling-product"
+
+export const dashboardRoute = "dashboard";
 
 export const regenTokenRoute = "auth/regenerate-token"
