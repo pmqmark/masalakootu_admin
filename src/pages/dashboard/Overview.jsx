@@ -8,12 +8,13 @@ import Button from '../../components/common/Button.jsx';
 import Profile from '../../components/common/Profile.jsx';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate.js';
-import { getAllMetrics, getOrderStatus, getRecentOrder, orderRoute } from '../../lib/endPoints.js';
+import { getAllMetrics, getOrderStatus, getRecentOrder, getSaleAnalytics, orderRoute } from '../../lib/endPoints.js';
 
 const Overview = () => {
 	const axiosPrivate = useAxiosPrivate();
 	const [metrics, setMetrics] = useState({});
 	const [recentOrder, setRecentOrder] = useState();
+	const [areaData, setAreaData] = useState({});
 	const [orders, setOrders] = useState({});
 	const [orderStatus, setOrdersStatus] = useState({});
 	const [loading, setLoading] = useState(false);
@@ -28,6 +29,7 @@ const Overview = () => {
 				axiosPrivate.get(getOrderStatus),
 				axiosPrivate.get(getRecentOrder),
 				axiosPrivate.get(`${orderRoute}/all`),
+				axiosPrivate.get(getSaleAnalytics)
 			]);
 
 			if (results[0].status === "fulfilled") {
@@ -56,6 +58,13 @@ const Overview = () => {
 				setRecentOrder(Array.isArray(orders) ? orders.slice(0, 15) : []);
 			} else {
 				console.error("Failed to fetch notifications:", results[3]?.reason);
+			}
+			if (results[4].status === "fulfilled") {
+				// console.log(results[4].value.data?.data)
+				const result = results[4].value?.data?.data?.result;
+				setAreaData(result);
+			} else {
+				console.error("Failed to fetch notifications:", results[4]?.reason);
 			}
 
 		} catch (error) {
@@ -113,7 +122,7 @@ const Overview = () => {
 									className="sm"
 								/>
 							</h2>
-							<Area/>
+							<Area data={areaData} />
 						</div>
 						{/* <div className="content_item">
 							<h2 className="sub_heading">Best selling products</h2>

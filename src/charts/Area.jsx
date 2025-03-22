@@ -37,7 +37,7 @@ const AreaChart = ({ data }) => {
       borderColor: "#f1f1f1",
     },
     xaxis: {
-      categories: SaleProductData[0].data.map((item) => item.x),
+      categories: data?.categories,
       labels: {
         style: {
           colors: "#888",
@@ -105,14 +105,15 @@ const AreaChart = ({ data }) => {
 
   const series = [
     {
-      name: "Sales",
-      data: SaleProductData[0].data.map((item) => item.y),
+      name: data?.series?.[0]?.name,
+      data: data?.series?.[0].data.map((item) => item.y),
     },
     {
-      name: "Products",
-      data: SaleProductData[1].data.map((item) => item.y),
+      name: data?.series?.[1]?.name,
+      data: data?.series?.[1]?.data.map((item) => item.y),
     },
   ];
+
 
   return (
     <div className="chart">
