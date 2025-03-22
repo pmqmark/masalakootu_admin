@@ -9,6 +9,7 @@ import Profile from '../../components/common/Profile.jsx';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate.js';
 import { bestProdsRoute, dashboardRoute, getAllMetrics, getOrderStatus, getRecentOrder, getSaleAnalytics, orderRoute } from '../../lib/endPoints.js';
+import { TableLoading } from '../../components/common/TableLoading.jsx';
 
 const Overview = () => {
 	const axiosPrivate = useAxiosPrivate();
@@ -54,6 +55,11 @@ const Overview = () => {
 	}, [])
 
 	console.log(recentOrder)
+
+	if (loading) return <>
+		<TableLoading />
+	  </>;
+
 	return (
 		<section>
 			<div className="container">
