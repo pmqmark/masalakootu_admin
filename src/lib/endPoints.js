@@ -18,7 +18,7 @@ export const productRoute = "products";
 
 // Category API
 export const categoryRoute = "categories";
-export const archiveCategory = "categories"; //:id
+export const archiveCategory = "categories"; // <=:id
 
 // Order API
 export const orderRoute = "orders";
