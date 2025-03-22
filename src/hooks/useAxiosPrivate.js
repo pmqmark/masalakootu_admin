@@ -4,6 +4,7 @@ import { axiosPrivate } from "../config/axios";
 import { logout } from "../store/slices/authenticationSlice";
 import { setRefreshToken } from "../store/slices/tokenSlicer";
 import useRefreshToken from "./useRefreshToken";
+import { regenTokenRoute } from "../lib/endPoints";
 
 const useAxiosPrivate = () => {
   const refresh = useRefreshToken();
@@ -34,7 +35,7 @@ const useAxiosPrivate = () => {
         if (error?.response?.status === 401 && !prevRequest?.sent) {
           prevRequest.sent = true;
 
-          if (prevRequest.url === "/api/auth/regenerate-token") {
+          if (prevRequest.url === regenTokenRoute) {
             dispatch(setRefreshToken(null));
             dispatch(logout());
             return;

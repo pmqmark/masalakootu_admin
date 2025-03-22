@@ -37,3 +37,9 @@ export const uploadSingleFilesRoute = "uploads/single";
 export const getAllMetrics = "dashboard/metrics";
 export const getOrderStatus = "dashboard/order-status-count";
 export const getRecentOrder = "dashboard/recent-orders";
+export const getSaleAnalytics = "dashboard/sale-analytics"
+export const bestProdsRoute = "dashboard/best-selling-product"
+
+export const dashboardRoute = "dashboard";
+
+export const regenTokenRoute = "auth/regenerate-token"

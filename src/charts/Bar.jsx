@@ -2,7 +2,7 @@ import React from "react";
 import ReactApexChart from "react-apexcharts";
 import AudienceData from '../api/AudienceData.json';
 
-const OrdersChart = () => {
+const OrdersChart = ({ data }) => {
   const chartOptions = {
     chart: {
       type: "bar",
@@ -11,23 +11,23 @@ const OrdersChart = () => {
       },
       fontFamily: "Inter, sans-serif"
     },
-      colors: ["#ffbf1c", "#ff852c"],
+    colors: ["#ffbf1c", "#ff852c"],
     fill: {
       shade: 'light',
       type: "solid",
     },
     plotOptions: {
-      bar:{
+      bar: {
         borderRadius: 2,
       }
-    }, 
+    },
     xaxis: {
-      categories: AudienceData.map((order) => order.name),
+      categories: data.map((item) => item?.day),
     },
     yaxis: {
       show: false,
     },
-    grid:{
+    grid: {
       borderColor: "#f1f1f1",
       show: false,
     },
@@ -41,12 +41,8 @@ const OrdersChart = () => {
 
   const chartSeries = [
     {
-      name: "Orders",
-      data: AudienceData.map((order) => order.orders)
-    },
-    {
-      name: "Products",
-      data: AudienceData.map((product) => product.products)
+      name: "Users",
+      data: data.map((item) => item?.userCount)
     },
   ];
 
