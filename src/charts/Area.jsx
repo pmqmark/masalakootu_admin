@@ -49,7 +49,7 @@ const AreaChart = ({ data }) => {
       forceNiceScale: true,
       labels: {
         formatter: function (value) {
-          return `${value}K`;
+          return `₹${value}`;
         },
         style: {
           colors: "#888",
@@ -62,7 +62,7 @@ const AreaChart = ({ data }) => {
       },
       y: {
         formatter: function (val) {
-          return `$${val}K`;
+          return `₹${val}`;
         },
       },
       marker: {
