@@ -16,6 +16,9 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
 import { TableLoading } from "../../components/common/TableLoading.jsx";
 // import truck from '../../images/common/delivery-truck-2.gif'
 // import truck from '../../images/common/delivery-truck-3.gif'
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { IoDownloadOutline } from "react-icons/io5";
+import PdfReport from "./PdfReport";
 
 const OrderDetail = () => {
   const { orderID } = useParams();
@@ -25,7 +28,7 @@ const OrderDetail = () => {
   const axiosPrivate = useAxiosPrivate();
 
   if (loading) return <>
-  <TableLoading/>
+    <TableLoading />
   </>;
   if (error) return <p>Error fetching order details.</p>;
   if (!order) return <p>Order not found.</p>;
@@ -44,7 +47,7 @@ const OrderDetail = () => {
     { value: "cancelled", label: "Cancelled" },
     { value: "returned", label: "Returned" },
   ];
-  
+
   const Status = [
     "processing",
     "billed",
@@ -66,9 +69,7 @@ const OrderDetail = () => {
 
 
   const products = order?.items;
-  const handleInvoice = () => {
-    alert("Under Construction invoice page");
-  };
+  
   return (
     <section className="orders">
       <div className="container">
@@ -77,12 +78,15 @@ const OrderDetail = () => {
             <div className="content_item">
               <h2 className="sub_heading">
                 <span>Order #{order._id}</span>
-                <Button
-                  icon={<Icons.TbDownload />}
-                  label="invoice"
-                  className="bg_light_success sm"
-                  onClick={handleInvoice}
-                />
+
+                <PDFDownloadLink document={<PdfReport data={order} />} fileName={`Invoice.pdf`}>
+                  <Button
+                    icon={<Icons.TbDownload />}
+                    label="invoice"
+                    className="bg_light_success sm"
+                  />
+                </PDFDownloadLink>
+
               </h2>
               <table className="bordered">
                 <thead>
@@ -133,7 +137,7 @@ const OrderDetail = () => {
                   </tr>
                   <tr>
                     <td colSpan="5" className="td_no_p">
-                      <b>Discount {order?.couponCode} : :</b>
+                      <b>Discount {order?.couponCode} :</b>
                     </td>
                     <td colSpan="1" className="td_no_p">
                       <b>-₹{order?.discount || 0}</b>
@@ -163,20 +167,19 @@ const OrderDetail = () => {
                 <span>Order Status</span>
                 <div className="flex gap-3">
 
-                <Dropdown
-                
-                placeholder={"Update the Status"}
-                options={StatusOptions}
-                selectedValue={selectedStatus}
-                  onClick={(option) => handleStatusChange(option.value)}
-                />
-                <Button
-                  icon={<Icons.TbShoppingCartCancel />}
-                  label="Cancel order"
-                  className="bg_light_danger sm"
-                />
+                  <Dropdown
+                    placeholder={"Update the Status"}
+                    options={StatusOptions}
+                    selectedValue={selectedStatus}
+                    onClick={(option) => handleStatusChange(option.value)}
+                  />
+                  <Button
+                    icon={<Icons.TbShoppingCartCancel />}
+                    label="Cancel order"
+                    className="bg_light_danger sm"
+                  />
                 </div>
-               
+
               </h2>
               <div className="order_status">
                 {Status.map((status, index) => {
@@ -208,7 +211,7 @@ const OrderDetail = () => {
                         </h5>
                         <p>
                           {order?.status === status.toLowerCase()
-                            ? new Date(order?.updatedAt ).toLocaleDateString('en-GB')
+                            ? new Date(order?.updatedAt).toLocaleDateString('en-GB')
                             : "Not Updated"}
                         </p>
                       </div>
@@ -253,7 +256,7 @@ const OrderDetail = () => {
                   <div className="detail_list_item">
                     <b>Payment Status:</b>
                     {order.payStatus.toLowerCase() === "completed" ||
-                    order.payStatus.toLowerCase() === "coming soon" ? (
+                      order.payStatus.toLowerCase() === "coming soon" ? (
                       <Badge
                         label={order.payStatus}
                         className="light-success"
