@@ -13,11 +13,11 @@ import { bestProdsRoute, dashboardRoute, getAllMetrics, getOrderStatus, getRecen
 const Overview = () => {
 	const axiosPrivate = useAxiosPrivate();
 	const [metrics, setMetrics] = useState({});
-	const [recentOrder, setRecentOrder] = useState();
+	const [recentOrder, setRecentOrder] = useState([]);
+	const [recentUsers, setRecentUsers] = useState([]);
 	const [areaData, setAreaData] = useState({});
 	const [bestProds, setBestProds] = useState([])
-	const [orders, setOrders] = useState({});
-	const [orderStatus, setOrdersStatus] = useState({});
+	
 	const [loading, setLoading] = useState(false);
 
 	const dummyImage = '../../../public/dummy.png'
@@ -39,6 +39,7 @@ const Overview = () => {
 				setRecentOrder(recent_orders)
 				setAreaData(sale_analytics)
 				setBestProds(best_prods)
+				setRecentUsers(recent_users)
 			}
 
 		} catch (error) {
@@ -150,10 +151,12 @@ const Overview = () => {
 						</div>
 					</div>
 					<div className="sidebar">
-						{/* <div className="sidebar_item">
-							<h2 className="sub_heading">Audience</h2>
-							<Bar />
-						</div> */}
+
+						<div className="sidebar_item">
+							<h2 className="sub_heading">New users</h2>
+							<Bar data={recentUsers} />
+						</div>
+
 						<div className="sidebar_item">
 							<h2 className="sub_heading">Recent Orders</h2>
 							<div className="recent_orders column">
