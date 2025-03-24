@@ -43,6 +43,8 @@ const AddProduct = ({ productData }) => {
     stock: 0,
     variations: [],
     tags: [],
+    hsn:"", 
+    tax:0,
   };
 
   const clonedState = _.cloneDeep(initialState);
@@ -254,6 +256,17 @@ const AddProduct = ({ productData }) => {
                   onChange={(value) => handleInputChange("name", value)}
                 />
               </div>
+
+              <div className="column">
+                <Input
+                  type="text"
+                  placeholder="Enter the HSN code"
+                  label="HSN Code"
+                  value={product.hsn}
+                  onChange={(value) => handleInputChange("hsn", value)}
+                />
+              </div>
+
               <div className="column">
                 <TextEditor
                   label="Description"
@@ -316,6 +329,23 @@ const AddProduct = ({ productData }) => {
                   value={product.price}
                   onChange={(value) =>
                     handleInputChange("price", parseFloat(value))
+                  }
+                  className="sm"
+                />
+              </div>
+            </div>
+
+            <div className="sidebar_item">
+              <h2 className="sub_heading">
+                <span>tax %</span>
+              </h2>
+              <div className="column">
+                <Input
+                  type="number"
+                  placeholder="Enter the tax"
+                  value={product.tax}
+                  onChange={(value) =>
+                    handleInputChange("tax", parseFloat(value))
                   }
                   className="sm"
                 />

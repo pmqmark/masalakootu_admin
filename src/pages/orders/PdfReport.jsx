@@ -108,8 +108,6 @@ const styles = StyleSheet.create({
 const PdfReport = ({ data }) => {
     console.log(data)
 
-    const grandTotal = data?.amount + data?.deliveryCharge - data?.discount
-
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -162,10 +160,11 @@ const PdfReport = ({ data }) => {
 
                             </View>
 
-                            <Text style={styles.boldRightSmSpan}>Subtotal : Rs. {data?.amount}</Text>
-                            <Text style={styles.boldRightSmSpan}>Shipping : Rs.{data?.deliveryCharge ?? 0} </Text>
+                            <Text style={styles.boldRightSmSpan}>Subtotal : Rs. {data?.subTotal}</Text>
+                            <Text style={styles.boldRightSmSpan}>Tax : Rs. {data?.totalTax}</Text>
+                            <Text style={styles.boldRightSmSpan}>Delivery Charge : Rs.{data?.deliveryCharge ?? 0} </Text>
                             <Text style={styles.boldRightSmSpan}>Discount : Rs.{data?.discount ?? 0} </Text>
-                            <Text style={styles.boldRightLgSpan}>Grand Total : Rs. {grandTotal ?? 0}</Text>
+                            <Text style={styles.boldRightLgSpan}>Grand Total : Rs. {data?.amount ?? 0}</Text>
                             <Text style={styles.boldRightSmSpan}>Masalakoottu Private Limited</Text>
                         </Rect>
 

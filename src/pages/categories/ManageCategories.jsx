@@ -46,6 +46,7 @@ const ManageCategories = () => {
     description: "",
     image: cataImage,
     productIds: [],
+    parent: null,
   });
 
   const [products, setProducts] = useState([]);
@@ -58,21 +59,6 @@ const ManageCategories = () => {
     });
   };
 
-  // const statusOptions = [
-  //   { "value": "active", "label": "active" },
-  //   { "value": "completed", "label": "completed" },
-  //   { "value": "new", "label": "new" },
-  //   { "value": "coming soon", "label": "coming soon" },
-  //   { "value": "inactive", "label": "inactive" },
-  //   { "value": "out of stock", "label": "out of stock" },
-  //   { "value": "discontinued", "label": "discontinued" },
-  //   { "value": "on sale", "label": "on sale" },
-  //   { "value": "featured", "label": "featured" },
-  //   { "value": "pending", "label": "pending" },
-  //   { "value": "archive", "label": "archive" },
-  //   { "value": "pause", "label": "pause" }
-  // ]
-
   const selectProducts = (selectedOptions) => {
     console.log({ selectedOptions })
     setCategories({
@@ -81,12 +67,6 @@ const ManageCategories = () => {
     });
   };
 
-  // const selectSelect = (selectedOption) => {
-  //   setCategories({
-  //     ...fields,
-  //     status: selectedOption.label,
-  //   });
-  // };
 
   const bulkAction = [
     { value: "delete", label: "Delete" },
@@ -97,10 +77,6 @@ const ManageCategories = () => {
   const bulkActionDropDown = (selectedOption) => {
     console.log(selectedOption);
   };
-
-  // const onPageChange = (newPage) => {
-  //   setCurrentPage(newPage);
-  // };
 
   const handleBulkCheckbox = (isCheck) => {
     setBulkCheck(isCheck);
@@ -122,17 +98,6 @@ const ManageCategories = () => {
     }));
   };
 
-  // const showTableRow = (selectedOption) => {
-  //   setSelectedValue(selectedOption.label);
-  // };
-
-  // const handleFeaturedChange = (ischeck) => {
-  //   setCategories({
-  //     ...fields,
-  //     isFeatured: ischeck,
-  //   });
-  // };
-
   const handleActionItemClick = (item, itemID) => {
     var updateItem = item?.toLowerCase();
 
@@ -151,8 +116,9 @@ const ManageCategories = () => {
     setLoading(true)
     try {
       const res = await axiosPrivate.get(`${categoryRoute}/all`);
-      const data = res?.data?.data?.result.filter((item) => !item?.isArchived)
+      const data = res?.data?.data?.result
       setCats(data)
+
     } catch (error) {
       console.log(error)
     } finally {
@@ -248,6 +214,8 @@ const ManageCategories = () => {
     }
   };
 
+  console.log({ fields })
+
   return (
     <>
       {/* conformation modal */}
@@ -267,6 +235,7 @@ const ManageCategories = () => {
                 <div className="column">
                   <Thumbnail setImage={handleInputChange} />
                 </div>
+
                 <div className="column">
                   <Input
                     type="text"
@@ -277,6 +246,7 @@ const ManageCategories = () => {
                     onChange={(value) => handleInputChange("name", value)}
                   />
                 </div>
+
                 <div className="column">
                   <Textarea
                     type="text"
@@ -297,6 +267,26 @@ const ManageCategories = () => {
                     options={products}
                     isSelected={null}
                   />
+                </div>
+
+                <div className="column input_field_wrapper  flex flex-col items-start gap-2 ">
+                  {
+                    <label className="text-sm" >Select Parent</label>
+                  }
+                  <select
+                    label="Select parent"
+                    placeholder="Select parent"
+                    value={fields.parent}
+                    onChange={(e) => handleInputChange("parent", e.target.value || null)}
+                    className="w-full p-3 rounded-lg border text-gray-400 focus:outline-none "
+                  >
+                    <option value="">Select a Parent</option>
+                    {
+                      cats?.map((item) => (
+                        <option value={item?._id}> {item.name} </option>
+                      ))
+                    }
+                  </select>
                 </div>
 
                 {/* <div className="column">

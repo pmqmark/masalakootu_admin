@@ -69,7 +69,7 @@ const OrderDetail = () => {
 
 
   const products = order?.items;
-  
+
   return (
     <section className="orders">
       <div className="container">
@@ -77,7 +77,7 @@ const OrderDetail = () => {
           <div className="content">
             <div className="content_item">
               <h2 className="sub_heading">
-                <span>Order #{order._id}</span>
+                <span>Order #{order.merchantOrderId}</span>
 
                 <PDFDownloadLink document={<PdfReport data={order} />} fileName={`Invoice.pdf`}>
                   <Button
@@ -128,29 +128,43 @@ const OrderDetail = () => {
                       <b>
                         ₹
                         {products.reduce(
-                          (sum, product) =>
-                            sum + product.price * product.quantity,
+                          (total, item) => {
+                            const extraCharges = item.variations?.reduce((acc, elem) => acc + elem?.additionalPrice, 0) || 0;
+                            return total + ((item.price + extraCharges) * item.quantity);
+                          },
                           0
                         )}
                       </b>
                     </td>
                   </tr>
+
                   <tr>
                     <td colSpan="5" className="td_no_p">
-                      <b>Discount {order?.couponCode} :</b>
+                      <b>Tax {order?.couponCode} </b>
                     </td>
                     <td colSpan="1" className="td_no_p">
-                      <b>-₹{order?.discount || 0}</b>
+                      <b>₹{order?.totalTax || 0}</b>
                     </td>
                   </tr>
+
                   <tr>
                     <td colSpan="5" className="td_no_p">
-                      <b>Shipping Charge :</b>
+                      <b>Shipping Charge </b>
                     </td>
                     <td colSpan="1" className="td_no_p">
                       <b>₹{order?.deliveryCharge || 0}</b>
                     </td>
                   </tr>
+
+                  <tr>
+                    <td colSpan="5" className="td_no_p">
+                      <b>Discount {order?.couponCode} </b>
+                    </td>
+                    <td colSpan="1" className="td_no_p">
+                      <b>-₹{order?.discount || 0}</b>
+                    </td>
+                  </tr>
+
                   <tr>
                     <td colSpan="5" className="td_no_p">
                       <b>Total amount</b>
@@ -243,7 +257,7 @@ const OrderDetail = () => {
                 <div className="detail_list">
                   <div className="detail_list_item">
                     <b>Transaction ID:</b>
-                    <p>{order?.payment_details?.transaction_id}</p>
+                    <p>{order?.transactionId ?? 'NIL'}</p>
                   </div>
                   <div className="detail_list_item">
                     <b>Payment Method:</b>

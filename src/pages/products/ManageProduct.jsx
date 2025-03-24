@@ -315,8 +315,8 @@ const ManageProduct = () => {
                       <th className="td_image">image</th>
                       <th colSpan="4">name</th>
                       <th>price</th>
-                      <th>store</th>
-                      <th>sku</th>
+                      <th>tax</th>
+                      <th>stock</th>
                       <th>created at</th>
                       <th className="td_status">status</th>
                       <th className="td_status">stock status</th>
@@ -356,13 +356,12 @@ const ManageProduct = () => {
                               <Link to={product.id}>{product.name}</Link>
                             </td>
                             <td>
-                              {`${product.price} `}
-                              <b>{product?.currency}</b>
+                              {`₹${product.price} `}
                             </td>
                             <td>
-                              <Link>{product?.brand}</Link>
+                              {product?.tax}
                             </td>
-                            <td>{product?.sku}</td>
+                            <td>{product?.stock}</td>
                             <td>{product?.createdAt.split("T")[0]}</td>
                             <td className="td_status">
                               {product?.isArchived ? (
