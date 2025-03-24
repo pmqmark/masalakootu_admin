@@ -268,6 +268,16 @@ const AddProduct = ({ productData }) => {
               </div>
 
               <div className="column">
+                <Input
+                  type="text"
+                  placeholder="Enter the Brand"
+                  label="Brand"
+                  value={product.brand}
+                  onChange={(value) => handleInputChange("brand", value)}
+                />
+              </div>
+
+              <div className="column">
                 <TextEditor
                   label="Description"
                   placeholder="Enter a description"
