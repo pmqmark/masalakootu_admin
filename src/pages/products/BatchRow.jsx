@@ -51,7 +51,7 @@ const BatchRow = ({ batch, index, removeBatchRow, setProduct }) => {
                     placeholder="Enter Manufacturing Date"
                     label="Manufacturing Date"
                     name="mfgDate"
-                    value={batch?.mfgDate}
+                    value={batch?.mfgDate ? new Date(batch?.mfgDate).toISOString().split("T")[0] : ""}
                     onChange={(value) => inputChangeHandler("mfgDate", value)}
                 />
 
@@ -60,7 +60,7 @@ const BatchRow = ({ batch, index, removeBatchRow, setProduct }) => {
                     placeholder="Enter Expiry Date"
                     label="Expiry Date"
                     name="expDate"
-                    value={batch?.expDate}
+                    value={batch?.expDate ? new Date(batch?.expDate).toISOString().split("T")[0] : ""}
                     onChange={(value) => inputChangeHandler("expDate", value)}
                 />
 
