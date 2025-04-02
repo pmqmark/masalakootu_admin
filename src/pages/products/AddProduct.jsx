@@ -39,6 +39,7 @@ const AddProduct = ({ productData }) => {
     description: "",
     brand: "",
     price: 0,
+    weight: 0,
     thumbnail: null,
     images: [],
     batches: [{
@@ -367,12 +368,12 @@ const AddProduct = ({ productData }) => {
                 onClick={saveAndExit}
               />
 
-              {/* <Button
-                label="save"
+              <Button
+                label="exit"
                 icon={<Icons.TbCircleCheck />}
                 className=""
-                onClick={saveProduct}
-              /> */}
+                onClick={()=>navigate("/catalog/product/manage")}
+              />
             </div>
 
             <div className="sidebar_item">
@@ -386,6 +387,23 @@ const AddProduct = ({ productData }) => {
                   value={product.price}
                   onChange={(value) =>
                     handleInputChange("price", parseFloat(value))
+                  }
+                  className="sm"
+                />
+              </div>
+            </div>
+
+            <div className="sidebar_item">
+              <h2 className="sub_heading">
+                <span>weight in grams</span>
+              </h2>
+              <div className="column">
+                <Input
+                  type="number"
+                  placeholder="Enter the weight"
+                  value={product.weight}
+                  onChange={(value) =>
+                    handleInputChange("weight", parseFloat(value))
                   }
                   className="sm"
                 />
