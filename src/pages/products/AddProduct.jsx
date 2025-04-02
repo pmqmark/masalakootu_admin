@@ -26,6 +26,7 @@ import { productRoute } from "../../lib/endPoints.js";
 import { toast } from "sonner";
 import { useLocation, useNavigate } from "react-router-dom";
 import _ from "lodash";
+import BatchRow from "./BatchRow.jsx";
 
 const AddProduct = ({ productData }) => {
   const axiosPrivate = useAxiosPrivate();
@@ -40,14 +41,17 @@ const AddProduct = ({ productData }) => {
     price: 0,
     thumbnail: null,
     images: [],
-    stock: 0,
+    batches: [{
+      batchNumber: "",
+      quantity: 1,
+      mfgDate: "",
+      expDate: ""
+    }],
     variations: [],
     tags: [],
-    hsn:"", 
-    tax:0,
+    hsn: "",
+    tax: 0,
   };
-
-  const clonedState = _.cloneDeep(initialState);
 
   const [product, setProduct] = useState(editProduct || initialState);
 
@@ -71,6 +75,7 @@ const AddProduct = ({ productData }) => {
     attribute: "",
     attributeValue: "",
   });
+
 
   const handleInputChange = (key, value) => {
     setProduct({
@@ -216,7 +221,7 @@ const AddProduct = ({ productData }) => {
         // Create a new product
         response = await axiosPrivate.post(productRoute, product);
       }
-  
+
       const data = response?.data;
       if (data?.success === true) {
         toast.success(editProduct ? "Product Updated" : "New Product Added");
@@ -226,7 +231,7 @@ const AddProduct = ({ productData }) => {
       toast.error("Something went wrong!");
     }
   };
-  
+
 
   const saveAndExit = async () => {
     await submitHandler();
@@ -238,6 +243,28 @@ const AddProduct = ({ productData }) => {
     const clonedState = _.cloneDeep(initialState);
     setProduct(clonedState);
   };
+
+  const addNewBatchRow = () => {
+    setProduct((prev) => ({
+      ...prev,
+      batches: [
+        ...prev.batches, {
+          batchNumber: "",
+          quantity: 1,
+          mfgDate: "",
+          expDate: ""
+        }]
+    }))
+  }
+
+  const removeBatchRow = (index)=>{
+    const newArr = product?.batches?.filter((_, idx)=> index !== idx) ?? [];
+
+    setProduct((prev) => ({
+      ...prev,
+      batches: newArr
+    }))
+  }
 
   return (
     <section>
@@ -256,6 +283,26 @@ const AddProduct = ({ productData }) => {
                   onChange={(value) => handleInputChange("name", value)}
                 />
               </div>
+
+              <div className="flex flex-col gap-4">
+                <div className="flex gap-2">
+                  <h3>Batches</h3>
+                  <button
+                    onClick={addNewBatchRow}
+                    className="bg-blue-500 text-white px-2 text-sm rounded-md"
+                  >
+                    Add
+                  </button>
+                </div>
+
+                {product?.batches?.length > 0 &&
+                  product?.batches?.map((item, index) => (
+                    <BatchRow key={index} batch={item} index={index} removeBatchRow={removeBatchRow} setProduct={setProduct} />
+                  ))
+                }
+              </div>
+
+
 
               <div className="column">
                 <Input
@@ -362,7 +409,7 @@ const AddProduct = ({ productData }) => {
               </div>
             </div>
 
-            <div className="sidebar_item">
+            {/* <div className="sidebar_item">
               <h2 className="sub_heading">
                 <span>stock</span>
               </h2>
@@ -377,7 +424,7 @@ const AddProduct = ({ productData }) => {
                   className="sm"
                 />
               </div>
-            </div>
+            </div> */}
 
             <div className="sidebar_item">
               <h2 className="sub_heading">tags</h2>
