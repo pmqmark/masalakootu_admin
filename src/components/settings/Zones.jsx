@@ -65,7 +65,7 @@ const Zones = () => {
     return (
         <div className={`flex flex-col gap-4`}>
             <div className='flex'>
-                <h2 className="sub_heading">Zone-wise Pincodes</h2>
+                <h2 className="sub_heading">Delivery Zones</h2>
                 <button
                     onClick={addNewZone}
                     className={`bg-blue-500 text-white px-2 rounded text-sm `}

@@ -54,10 +54,10 @@ const SingleZone = ({ item, index, removeHandler }) => {
                     Save</button>
 
                 <button
-                    onClick={()=>removeHandler(item?._id)}
+                    onClick={() => removeHandler(item?._id)}
                     className={`bg-red-600 text-white px-2 rounded text-sm`}
                 >
-                   Remove</button>
+                    Remove</button>
 
             </div>
             <div className='flex flex-col gap-4'>
@@ -70,6 +70,7 @@ const SingleZone = ({ item, index, removeHandler }) => {
                     onChange={(value) => handleInputChange("name", value)}
                 />
 
+                <label className={`text-sm`}>Enter Pincodes</label>
                 <div className='w-full'>
                     <CreatableSelect
                         isMulti
