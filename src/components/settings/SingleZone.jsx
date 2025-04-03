@@ -8,7 +8,7 @@ import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import { zoneRoute } from '../../lib/endPoints';
 import { toast } from 'sonner';
 
-const SingleZone = ({ item, index }) => {
+const SingleZone = ({ item, index, removeHandler }) => {
     const axiosPrivate = useAxiosPrivate()
     const [data, setData] = useState(item)
     const initialOptions = item?.pincodes?.map(item => ({ label: item, value: item })) ?? []
@@ -17,6 +17,7 @@ const SingleZone = ({ item, index }) => {
 
     const selectHandleChange = (newValue) => {
         setSelectedOptions(newValue);
+        setData((prev) => ({ ...prev, pincodes: newValue?.map(item => item?.value) }))
     };
 
     const handleInputChange = (field, value) => {
@@ -26,14 +27,17 @@ const SingleZone = ({ item, index }) => {
     const handleSubmit = async () => {
         try {
             console.log("Btn clicked")
-            const response = await axiosPrivate.put(`${zoneRoute}/${item?._id}`, {
-                name: data?.name,
-                pincodes: selectedOptions?.map(item => item?.value)
-            })
+
+            if (!data?.name?.trim()) {
+                return toast.info('Add a name')
+            }
+
+            const response = await axiosPrivate.put(`${zoneRoute}/${item?._id}`, data)
 
             if (response?.data?.success) {
                 toast.success("Updated")
             }
+
         } catch (error) {
             console.log(error)
         }
@@ -41,9 +45,20 @@ const SingleZone = ({ item, index }) => {
 
     return (
         <div className='flex flex-col gap-4'>
-            <div>
+            <div className='flex gap-4'>
                 <label>Zone {index + 1}</label>
-                <button onClick={handleSubmit}> Save</button>
+                <button
+                    onClick={handleSubmit}
+                    className={`bg-green-600 text-white px-2 rounded text-sm`}
+                >
+                    Save</button>
+
+                <button
+                    onClick={()=>removeHandler(item?._id)}
+                    className={`bg-red-600 text-white px-2 rounded text-sm`}
+                >
+                   Remove</button>
+
             </div>
             <div className='flex flex-col gap-4'>
                 <Input
