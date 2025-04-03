@@ -7,6 +7,7 @@ import Textarea from "../../components/common/Textarea.jsx";
 import Dropdown from "../../components/common/Dropdown.jsx";
 import Thumbnail from "../../components/common/Thumbnail.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
+import Zones from '../../components/settings/Zones.jsx';
 
 const General = () => {
   const [fields, setFields] = useState({
@@ -63,6 +64,12 @@ const General = () => {
 						</div>
 					</div>
 					<div className="content">
+
+          <div className="content_item">
+<Zones/>
+          </div>
+
+
 						<div className="content_item">
 							<h2 className="sub_heading">Store Information</h2>
               <div className="column_2">
