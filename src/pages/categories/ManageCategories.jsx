@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "../../components/common/Input.jsx";
 import Badge from "../../components/common/Badge.jsx";
 import Button from "../../components/common/Button.jsx";
@@ -29,9 +29,9 @@ const ManageCategories = () => {
   // edit category
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItemID, setSelectedItemID] = useState(null);
+  const navigate = useNavigate();
 
   // ------Pagination----------
-  // const navigate = useNavigate();
   // const [currentPage, setCurrentPage] = useState(1);
   // const [selectedValue, setSelectedValue] = useState(5);
   // const [tableRow, setTableRow] = useState([
@@ -107,8 +107,8 @@ const ManageCategories = () => {
       setIsModalOpen(true);
     }
     else if (updateItem === "edit") {
-      // navigate(`/catalog/categories/manage/${itemID}`)
-      toast.warning("Please Contact Your Developer Team")
+      navigate(`/catalog/categories/${itemID}`)
+      // toast.warning("Please Contact Your Developer Team")
     }
   };
 
