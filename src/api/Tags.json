@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "label": "masala",
+    "created_at": "2023-09-30T10:00:00Z",
+    "status": "Active",
+    "link": "https://example.com/masala",
+    "description": "This is masala"
+  },
+  {
+    "id": 2,
+    "label": "spice",
+    "created_at": "2023-09-30T11:00:00Z",
+    "status": "Inactive",
+    "link": "https://example.com/spice",
+    "description": "This is spice"
+  }
+  
+]
