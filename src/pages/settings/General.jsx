@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Icons from "react-icons/tb";
 import Languages from '../../api/languages.json'
 import Currencies from '../../api/Currencies.json';
@@ -7,6 +7,8 @@ import Textarea from "../../components/common/Textarea.jsx";
 import Dropdown from "../../components/common/Dropdown.jsx";
 import Thumbnail from "../../components/common/Thumbnail.jsx";
 import MultiSelect from "../../components/common/MultiSelect.jsx";
+import Zones from '../../components/settings/Zones.jsx';
+import Charges from '../../components/settings/Charges.jsx';
 
 const General = () => {
   const [fields, setFields] = useState({
@@ -27,44 +29,54 @@ const General = () => {
     });
   };
 
-  const currenciesOptions = Currencies.map(currency=>({
-  	label:currency.name
+  const currenciesOptions = Currencies.map(currency => ({
+    label: currency.name
   }))
 
   const handleCurrencySelect = (option) => {
     setFields({
-    	...fields,
-    	currency: option.label,
+      ...fields,
+      currency: option.label,
     })
   };
 
   const handleLanguageSelect = (option) => {
     setFields({
-    	...fields,
-    	language: option.label,
+      ...fields,
+      language: option.label,
     })
   };
 
   const languagesWithCountries = Languages.reduce((languages, country) => {
-	  country.languages.forEach(language => {
-	    languages.push({ label: `${language} (${country.country})`, value: language });
-	  });
-	  return languages;
-	}, []);
-	return (
-		<section>
-			<div className="container">
-				<div className="wrapper">
-					<div className="sidebar">
-						<div className="sidebar_item">
-							<div className="column">
-								<Thumbnail/>
-							</div>
-						</div>
-					</div>
-					<div className="content">
-						<div className="content_item">
-							<h2 className="sub_heading">Store Information</h2>
+    country.languages.forEach(language => {
+      languages.push({ label: `${language} (${country.country})`, value: language });
+    });
+    return languages;
+  }, []);
+  return (
+    <section>
+      <div className="container">
+        <div className="wrapper">
+          <div className="sidebar">
+            <div className="sidebar_item">
+              <div className="column">
+                <Thumbnail />
+              </div>
+            </div>
+          </div>
+          <div className="content">
+
+            <div className="content_item">
+              <Zones />
+            </div>
+
+            <div className="content_item">
+              <Charges />
+            </div>
+
+
+            <div className="content_item">
+              <h2 className="sub_heading">Store Information</h2>
               <div className="column_2">
                 <Input
                   type="text"
@@ -125,33 +137,33 @@ const General = () => {
                   onChange={(value) => handleInputChange("phone", value)}
                 />
               </div>
-						</div>
-						<div className="content_item">
-							<h2 className="sub_heading">Localization</h2>
-							<div className="column_2">
-								<MultiSelect
-					        placeholder="Select currency"
-					        label="Select currency"
-					        options={currenciesOptions}
-					        isSelected={fields.currency}
-					        onChange={handleCurrencySelect}
-					      />
-							</div>
-							<div className="column_2">
-								<MultiSelect
-					        placeholder="Select Languages"
-					        label="Select Languages"
-					        options={languagesWithCountries}
-					        isSelected={fields.language}
-					        onChange={handleLanguageSelect}
-					      />
-							</div>		
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-	)
+            </div>
+            <div className="content_item">
+              <h2 className="sub_heading">Localization</h2>
+              <div className="column_2">
+                <MultiSelect
+                  placeholder="Select currency"
+                  label="Select currency"
+                  options={currenciesOptions}
+                  isSelected={fields.currency}
+                  onChange={handleCurrencySelect}
+                />
+              </div>
+              <div className="column_2">
+                <MultiSelect
+                  placeholder="Select Languages"
+                  label="Select Languages"
+                  options={languagesWithCountries}
+                  isSelected={fields.language}
+                  onChange={handleLanguageSelect}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
 }
 
 export default General;

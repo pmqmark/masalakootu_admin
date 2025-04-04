@@ -43,3 +43,7 @@ export const bestProdsRoute = "dashboard/best-selling-product"
 export const dashboardRoute = "dashboard";
 
 export const regenTokenRoute = "auth/regenerate-token"
+
+export const zoneRoute = "zones";
+
+export const chargeRoute = "charges";
