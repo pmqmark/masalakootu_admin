@@ -49,7 +49,7 @@ const SingleCharge = ({ item, index, removeHandler, zonelist }) => {
     return (
         <div className='flex flex-col gap-4'>
             <div className='flex gap-4'>
-                <label>Charge {index + 1}</label>
+                <label>Charge no. {index + 1}</label>
                 <button
                     onClick={handleSubmit}
                     className={`bg-green-600 text-white px-2 rounded text-sm`}

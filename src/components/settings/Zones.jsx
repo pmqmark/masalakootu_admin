@@ -64,7 +64,7 @@ const Zones = () => {
 
     return (
         <div className={`flex flex-col gap-4`}>
-            <div className='flex'>
+            <div className='flex justify-center p-2'>
                 <h2 className="sub_heading">Delivery Zones</h2>
                 <button
                     onClick={addNewZone}

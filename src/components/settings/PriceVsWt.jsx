@@ -23,7 +23,7 @@ const PriceVsWt = ({ item, index, removeHandler, data, setData }) => {
     return (
         <div className='flex flex-col gap-2'>
             <div className='flex gap-4'>
-                <h4>Weight - Price : {index + 1}</h4>
+                <h4>Weight - Price no. {index + 1}</h4>
                 <button
                     onClick={() => removeHandler(index)}
                     className={`bg-red-600 text-white px-2 rounded text-sm`}

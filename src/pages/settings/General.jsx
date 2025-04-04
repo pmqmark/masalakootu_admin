@@ -57,25 +57,27 @@ const General = () => {
     <section>
       <div className="container">
         <div className="wrapper">
+
           <div className="sidebar">
             <div className="sidebar_item">
               <div className="column">
-                <Thumbnail />
+                {/* <Thumbnail /> */}
+              <Zones />
               </div>
             </div>
           </div>
+
           <div className="content">
 
-            <div className="content_item">
-              <Zones />
-            </div>
+            {/* <div className="content_item">
+            </div> */}
 
             <div className="content_item">
               <Charges />
             </div>
 
 
-            <div className="content_item">
+            {/* <div className="content_item">
               <h2 className="sub_heading">Store Information</h2>
               <div className="column_2">
                 <Input
@@ -137,8 +139,9 @@ const General = () => {
                   onChange={(value) => handleInputChange("phone", value)}
                 />
               </div>
-            </div>
-            <div className="content_item">
+            </div> */}
+
+            {/* <div className="content_item">
               <h2 className="sub_heading">Localization</h2>
               <div className="column_2">
                 <MultiSelect
@@ -158,7 +161,8 @@ const General = () => {
                   onChange={handleLanguageSelect}
                 />
               </div>
-            </div>
+            </div> */}
+
           </div>
         </div>
       </div>
