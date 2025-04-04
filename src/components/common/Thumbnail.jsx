@@ -12,6 +12,7 @@ const Thumbnail = ({ className, required, preloadedImage, onClick, setImage }) =
   const [uploadedImage, setUploadedImage] = useState(preloadedImage || null);
   const [isLoading, setLoading] = useState(false)
 
+  console.log(uploadedImage)
   const handleDelete = () => {
     setUploadedImage(null);
   };
@@ -69,7 +70,9 @@ const Thumbnail = ({ className, required, preloadedImage, onClick, setImage }) =
           {uploadedImage ? (
             <img src={uploadedImage} alt="Product Thumbnail" />
           ) : (
-            <img src={Image} className="defualt_img" alt="Product Thumbnail" />
+            preloadedImage ?
+              <img src={preloadedImage} className="" alt="Product Thumbnail" /> :
+              <img src={Image} className="defualt_img" alt="Product Thumbnail" />
           )}
           <label htmlFor="imageUpload">
             <Icons.TbPencil className="thumbnail_edit" />

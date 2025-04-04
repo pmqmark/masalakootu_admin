@@ -2,13 +2,13 @@ import { Link } from 'react-router-dom';
 import * as Icons from "react-icons/tb";
 import Bar from '../../charts/Bar.jsx';
 import Area from '../../charts/Area.jsx';
-import Products from '../../api/Products.json';
-import Badge from '../../components/common/Badge.jsx';
+// import Products from '../../api/Products.json';
+// import Badge from '../../components/common/Badge.jsx';
 import Button from '../../components/common/Button.jsx';
 import Profile from '../../components/common/Profile.jsx';
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate.js';
-import { bestProdsRoute, dashboardRoute, getAllMetrics, getOrderStatus, getRecentOrder, getSaleAnalytics, orderRoute } from '../../lib/endPoints.js';
+import { dashboardRoute } from '../../lib/endPoints.js';
 import { TableLoading } from '../../components/common/TableLoading.jsx';
 
 const Overview = () => {
@@ -18,7 +18,7 @@ const Overview = () => {
 	const [recentUsers, setRecentUsers] = useState([]);
 	const [areaData, setAreaData] = useState({});
 	const [bestProds, setBestProds] = useState([])
-	
+
 	const [loading, setLoading] = useState(false);
 
 	const dummyImage = '../../../public/dummy.png'
@@ -34,7 +34,8 @@ const Overview = () => {
 					recent_orders,
 					recent_users,
 					best_prods,
-					sale_analytics } = response.data?.data;
+					sale_analytics
+				} = response.data.data;
 
 				setMetrics(metrics_data)
 				setRecentOrder(recent_orders)
@@ -58,7 +59,7 @@ const Overview = () => {
 
 	if (loading) return <>
 		<TableLoading />
-	  </>;
+	</>;
 
 	return (
 		<section>
