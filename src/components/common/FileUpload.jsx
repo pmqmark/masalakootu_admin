@@ -4,11 +4,13 @@ import * as Icons from "react-icons/tb";
 import Button from "./Button.jsx";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate.js"
 import { uploadMultiFilesRoute } from '../../lib/endPoints.js';
+import useImageCompression from '../../hooks/useImageCompression.js';
 
 const DropZone = ({ uploadedFiles, setUploadedFiles }) => {
   const axiosPrivate = useAxiosPrivate()
   const [loading, setLoading] = useState(false); 
   // const [uploadedFiles, setUploadedFiles] = useState([]);
+  const {compressImage} =useImageCompression()
 
   const onDrop = useCallback(async acceptedFiles => {
     // const filesWithPreview = acceptedFiles.map(file => Object.assign(file, {
@@ -18,11 +20,21 @@ const DropZone = ({ uploadedFiles, setUploadedFiles }) => {
     // setUploadedFiles(prevFiles => [...prevFiles, ...filesWithPreview]);
     setLoading(true);
     const formData = new FormData();
-    acceptedFiles.forEach(file => {
-      formData.append('files', file)
-    })
+    // acceptedFiles.forEach(file => {
+    //   formData.append('files', file)
+    // })
 
     try {
+      for (const file of acceptedFiles) {
+        // Only compress image files
+        if (file.type.startsWith("image/")) {
+          const compressed = await compressImage(file);
+          formData.append("files", compressed, file.name); // Use original name
+        } else {
+          // Directly append non-image files
+          formData.append("files", file);
+        }
+      }
       const response = await axiosPrivate.post(uploadMultiFilesRoute, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
