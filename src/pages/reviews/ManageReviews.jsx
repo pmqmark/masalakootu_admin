@@ -13,25 +13,35 @@ import Dropdown from "../../components/common/Dropdown.jsx";
 import Pagination from "../../components/common/Pagination.jsx";
 import TableAction from "../../components/common/TableAction.jsx";
 import SelectOption from "../../components/common/SelectOption.jsx";
+import useGetAllReviews from "../../hooks/reviewsHooks/useGetAllReviews.js";
+import TableSkeleton from "../../components/common/TableSkeleton.jsx";
+import ConfirmDeleteModal from "../../components/common/ConfirmDeleteModal.jsx";
+import { reviewsApi } from "../../lib/endPoints.js";
 
 const ManageReviews = () => {
   const [bulkCheck, setBulkCheck] = useState(false);
   const [specificChecks, setSpecificChecks] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedValue, setSelectedValue] = useState(5);
-    const navigate = useNavigate();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedItemID, setSelectedItemID] = useState(null);
+  const navigate = useNavigate();
   const [tableRow, setTableRow] = useState([
     { value: 2, label: "2" },
     { value: 5, label: "5" },
     { value: 10, label: "10" },
   ]);
+  const { reviews, loading, error, refetch } = useGetAllReviews();
 
-  const reviews = Reviews;
-  const productIds = Reviews.map(review => review.product_id.toString());
-  const customerIds = Reviews.map(review => review.customer_id.toString());
+  const productIds = Reviews.map((review) => review.product_id.toString());
+  const customerIds = Reviews.map((review) => review.customer_id.toString());
 
-  const product = Products.filter(product => productIds.includes(product.id.toString()));
-  const customer = Customers.filter(customer => customerIds.includes(customer.id.toString()));
+  const product = Products.filter((product) =>
+    productIds.includes(product.id.toString())
+  );
+  const customer = Customers.filter((customer) =>
+    customerIds.includes(customer.id.toString())
+  );
   const bulkAction = [
     { value: "delete", label: "Delete" },
     { value: "category", label: "Category" },
@@ -70,15 +80,36 @@ const ManageReviews = () => {
     setSelectedValue(selectedOption.label);
   };
 
-
   const actionItems = ["Delete", "edit"];
 
   const handleActionItemClick = (item, itemID) => {
     var updateItem = item.toLowerCase();
     if (updateItem === "delete") {
-      alert(`#${itemID} item delete`);
+      setSelectedItemID(itemID);
+      setIsModalOpen(true);
     } else if (updateItem === "edit") {
       navigate(`/reviews/${itemID}`);
+    }
+  };
+  const handleDeleteConfirm = async () => {
+    try {
+      // Find the selected product before updating the state
+      const selectedReviews = reviews.find((p) => p._id === selectedItemID);
+      const newStatus = selectedReviews?.isArchived ? "unarchived" : "archived";
+      // Send the request to update the status
+      const response = await axiosPrivate.patch(`${reviewsApi}/${selectedItemID}`, {
+        status: newStatus,
+      });
+
+      if (response.status === 200) {
+        toast.success(`Product ${newStatus} successfully!`);
+        refetch()
+      }
+    } catch (error) {
+      console.error("Error updating product status:", error);
+      toast.error("Failed to update product status.");
+    } finally {
+      setIsModalOpen(false); // Close modal after action
     }
   };
 
@@ -87,7 +118,7 @@ const ManageReviews = () => {
       <div className="container">
         <div className="wrapper">
           <div className="content transparent">
-            <div className="content_head">
+            <div className="content_head justify-between">
               <Dropdown
                 placeholder="Bulk Action"
                 className="sm"
@@ -98,14 +129,14 @@ const ManageReviews = () => {
                 placeholder="Search Review..."
                 className="sm table_search"
               />
-              <div className="btn_parent">
+              {/* <div className="btn_parent">
                 <Link to="/catalog/review/add" className="sm button">
                   <Icons.TbPlus />
                   <span>Create Review</span>
                 </Link>
                 <Button label="Advance Filter" className="sm" />
                 <Button label="save" className="sm" />
-              </div>
+              </div> */}
             </div>
             <div className="content_body">
               <div className="table_responsive">
@@ -128,84 +159,76 @@ const ManageReviews = () => {
                       <th>actions</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {reviews.map((review, key) => {
+                  {loading ? (
+                    <TableSkeleton ColumnCount={9} />
+                  ) : (
+                    reviews.map((review, key) => {
                       return (
-                        <tr key={key}>
-                          <td className="td_checkbox">
-                            <CheckBox
-                              onChange={(isCheck) =>
-                                handleCheckReview(isCheck, review.review_id.toString())
-                              }
-                              isChecked={specificChecks[review.review_id.toString()] || false}
-                            />
-                          </td>
-                          <td className="td_id">{review.review_id}</td>
-                          <td>
-                            <Link to={review.review_id}>{product[key].name}</Link>
-                          </td>
-                          <td>
-                            <Link to={review.review_id}>{customer[key].name}</Link>
-                          </td>
-                          <td>
-                            <Rating value={review.rating}/>
-                          </td>
-                          <td className="td_review">
-                            <p>{review.review_text}</p>
-                          </td>
-                          <td>{review.review_date}</td>
-                          <td className="td_status">
-                          {review.status.toLowerCase() === "active" ||
-                           review.status.toLowerCase() === "completed" ||
-                           review.status.toLowerCase() === "approved" ||
-                           review.status.toLowerCase() === "delivered" ||
-                           review.status.toLowerCase() === "shipped" ||
-                           review.status.toLowerCase() === "new" ||
-                           review.status.toLowerCase() === "coming soon" ? (
-                             <Badge
-                               label={review.status}
-                               className="light-success"
-                             />
-                           ) : review.status.toLowerCase() === "inactive" ||
-                             review.status.toLowerCase() === "out of stock" ||
-                             review.status.toLowerCase() === "rejected" ||
-                             review.status.toLowerCase() === "locked" ||
-                             review.status.toLowerCase() === "discontinued" ? (
-                             <Badge
-                               label={review.status}
-                               className="light-danger"
-                             />
-                           ) : review.status.toLowerCase() === "on sale" ||
-                               review.status.toLowerCase() === "featured" ||
-                               review.status.toLowerCase() === "processing" ||
-                               review.status.toLowerCase() === "pending" ? (
-                             <Badge
-                               label={review.status}
-                               className="light-warning"
-                             />
-                           ) : review.status.toLowerCase() === "archive" ||
-                               review.status.toLowerCase() === "pause" ? (
-                             <Badge
-                               label={review.status}
-                               className="light-secondary"
-                             />
-                           ) : (
-                             review.status
-                           )}
-                        </td>
-                         
-                          <td className="td_action">
-                            <TableAction
-                              actionItems={actionItems}
-                              onActionItemClick={(item) =>
-                                handleActionItemClick(item, review.review_id)
-                              }
-                            />
-                          </td>
-                        </tr>
+                        <tbody>
+                          <tr key={key}>
+                            <td className="td_checkbox">
+                              <CheckBox
+                                onChange={(isCheck) =>
+                                  handleCheckReview(
+                                    isCheck,
+                                    review._id.toString()
+                                  )
+                                }
+                                isChecked={
+                                  specificChecks[review._id.toString()] || false
+                                }
+                              />
+                            </td>
+                            <td className="td_id">{review._id}</td>
+                            <td>{review?.productId?.name}</td>
+                            <td>
+                              <Link
+                                to={`/customers/manage/${review?.userId?._id}`}
+                              >{`${review?.userId?.firstName} ${review?.userId?.lastName}`}</Link>
+                            </td>
+                            <td>
+                              <Rating value={review.rating} />
+                            </td>
+                            <td className="td_review">
+                              <p>{review.comment}</p>
+                            </td>
+                            <td>
+                              {new Date(review.createdAt).toLocaleString(
+                                "en-US",
+                                {
+                                  dateStyle: "medium",
+                                  timeStyle: "short",
+                                }
+                              )}
+                            </td>
+
+                            <td className="td_status">
+                              {review.isArchived === false || review.isArchived === "unarchived" ? (
+                                <Badge
+                                  label="Active"
+                                  className="light-success"
+                                />
+                              ) : (
+                                <Badge
+                                  label="Inactive"
+                                  className="light-danger"
+                                />
+                              )}
+                            </td>
+
+                            <td className="td_action">
+                              <TableAction
+                                actionItems={actionItems}
+                                onActionItemClick={(item) =>
+                                  handleActionItemClick(item, review._id)
+                                }
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
                       );
-                    })}
-                  </tbody>
+                    })
+                  )}
                 </table>
               </div>
             </div>
@@ -226,6 +249,13 @@ const ManageReviews = () => {
           </div>
         </div>
       </div>
+        {/* Confirm Delete Modal */}
+            <ConfirmDeleteModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onConfirm={handleDeleteConfirm}
+              itemID={selectedItemID}
+            />
     </section>
   );
 };

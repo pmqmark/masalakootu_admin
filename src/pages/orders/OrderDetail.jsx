@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as Icons from "react-icons/tb";
 import Orders from "../../api/Orders.json";
 import Products from "../../api/Products.json";
@@ -26,10 +26,22 @@ const OrderDetail = () => {
   const { order, loading, error, setOrder, refetch } = useGetOrderById(orderID);
   const [selectedStatus, setSelectedStatus] = useState(order?.status || "");
   const axiosPrivate = useAxiosPrivate();
+  const [trackingID, setTrackingID] = useState(order?.waybill || "");
+  const [courierPartner, setCourierPartner] = useState(order?.deliveryPartner || "");  
+  const [trackingLoading, setTrackingLoading] = useState(false);
+useEffect(() => {
+  if (order) {
+    setTrackingID(order?.waybill || "");
+    setCourierPartner(order?.deliveryPartner || "");
+  }
+}, [order])
 
-  if (loading) return <>
-    <TableLoading />
-  </>;
+  if (loading)
+    return (
+      <>
+        <TableLoading />
+      </>
+    );
   if (error) return <p>Error fetching order details.</p>;
   if (!order) return <p>Order not found.</p>;
 
@@ -67,8 +79,25 @@ const OrderDetail = () => {
     }
   };
 
-
   const products = order?.items;
+
+  const handleTrackingSubmit = async (e) => {
+    e.preventDefault();
+    setTrackingLoading(true);
+    try {
+      const updatedData = {
+        waybill: trackingID,
+        deliveryPartner: courierPartner,
+      };
+
+      await axiosPrivate.put(`${orderRoute}/${orderID}`, updatedData);
+      refetch(); // Refresh order details after successful update
+    } catch (error) {
+      console.error("Failed to update tracking details:", error);
+    } finally {
+      setTrackingLoading(false);
+    }
+  };
 
   return (
     <section className="orders">
@@ -79,14 +108,16 @@ const OrderDetail = () => {
               <h2 className="sub_heading">
                 <span>Order #{order.merchantOrderId}</span>
 
-                <PDFDownloadLink document={<PdfReport data={order} />} fileName={`Invoice.pdf`}>
+                <PDFDownloadLink
+                  document={<PdfReport data={order} />}
+                  fileName={`Invoice.pdf`}
+                >
                   <Button
                     icon={<Icons.TbDownload />}
                     label="invoice"
                     className="bg_light_success sm"
                   />
                 </PDFDownloadLink>
-
               </h2>
               <table className="bordered">
                 <thead>
@@ -103,7 +134,12 @@ const OrderDetail = () => {
                   {products.map((product) => (
                     <tr key={product.id}>
                       <td>
-                        <img src={product?.thumbnail?.location || "/public/dummy.jpg"} alt="" />
+                        <img
+                          src={
+                            product?.thumbnail?.location || "/public/dummy.jpg"
+                          }
+                          alt=""
+                        />
                       </td>
                       <td>
                         <Link
@@ -127,13 +163,16 @@ const OrderDetail = () => {
                     <td colSpan="1" className="td_no_p">
                       <b>
                         ₹
-                        {products.reduce(
-                          (total, item) => {
-                            const extraCharges = item.variations?.reduce((acc, elem) => acc + elem?.additionalPrice, 0) || 0;
-                            return total + ((item.price + extraCharges) * item.quantity);
-                          },
-                          0
-                        )}
+                        {products.reduce((total, item) => {
+                          const extraCharges =
+                            item.variations?.reduce(
+                              (acc, elem) => acc + elem?.additionalPrice,
+                              0
+                            ) || 0;
+                          return (
+                            total + (item.price + extraCharges) * item.quantity
+                          );
+                        }, 0)}
                       </b>
                     </td>
                   </tr>
@@ -180,7 +219,6 @@ const OrderDetail = () => {
               <h2 className="sub_heading">
                 <span>Order Status</span>
                 <div className="flex gap-3">
-
                   <Dropdown
                     placeholder={"Update the Status"}
                     options={StatusOptions}
@@ -193,7 +231,6 @@ const OrderDetail = () => {
                     className="bg_light_danger sm"
                   />
                 </div>
-
               </h2>
               <div className="order_status">
                 {Status.map((status, index) => {
@@ -225,7 +262,9 @@ const OrderDetail = () => {
                         </h5>
                         <p>
                           {order?.status === status.toLowerCase()
-                            ? new Date(order?.updatedAt).toLocaleDateString('en-GB')
+                            ? new Date(order?.updatedAt).toLocaleDateString(
+                                "en-GB"
+                              )
                             : "Not Updated"}
                         </p>
                       </div>
@@ -251,13 +290,65 @@ const OrderDetail = () => {
               </div>
             </div>
             <div className="sidebar_item">
-              <h2 className="sub_heading">Payment Details:</h2>
+              <h2 className="sub_heading mb-4">Tracking Details</h2>
 
+              <form onSubmit={handleTrackingSubmit} className="space-y-4">
+                <div className="flex flex-col gap-1">
+                  <label
+                    htmlFor="trackingID"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Tracking ID
+                  </label>
+                  <input
+                    id="trackingID"
+                    type="text"
+                    value={trackingID}
+                    onChange={(e) => setTrackingID(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Enter tracking ID"
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label
+                    htmlFor="courierPartner"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Courier Partner
+                  </label>
+                  <input
+                    id="courierPartner"
+                    type="text"
+                    value={courierPartner}
+                    onChange={(e) => setCourierPartner(e.target.value)}
+                    className="border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Enter courier partner name"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={trackingLoading}
+                  className={`w-full py-2 rounded-lg text-white font-medium transition ${
+                    trackingLoading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-yellow-500 hover:bg-yellow-400"
+                  }`}
+                >
+                  {trackingLoading ? "Updating..." : "Update Tracking"}
+                </button>
+              </form>
+            </div>
+
+            <div className="sidebar_item">
+              <h2 className="sub_heading">Payment Details:</h2>
               <div className="column">
                 <div className="detail_list">
                   <div className="detail_list_item">
                     <b>Transaction ID:</b>
-                    <p>{order?.transactionId ?? 'NIL'}</p>
+                    <p>{order?.transactionId ?? "NIL"}</p>
                   </div>
                   <div className="detail_list_item">
                     <b>Payment Method:</b>
@@ -270,7 +361,7 @@ const OrderDetail = () => {
                   <div className="detail_list_item">
                     <b>Payment Status:</b>
                     {order.payStatus.toLowerCase() === "completed" ||
-                      order.payStatus.toLowerCase() === "coming soon" ? (
+                    order.payStatus.toLowerCase() === "coming soon" ? (
                       <Badge
                         label={order.payStatus}
                         className="light-success"

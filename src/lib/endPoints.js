@@ -16,6 +16,10 @@ export const getAllProducts = "products/all";
 export const archiveStatus = "products";
 export const productRoute = "products";
 
+// review
+export const getAllReviews = 'reviews/all'
+export const reviewsApi = 'reviews'
+
 // Category API
 export const categoryRoute = "categories";
 export const archiveCategory = "categories"; // <=:id

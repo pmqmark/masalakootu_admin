@@ -31,6 +31,11 @@ const navigation = [
         url: "/categories/manage",
         icon: <Icons.TbCategory className="menu_icon" />,
       },
+       {
+    name: "Reviews",
+    url: "/reviews",
+    icon: <Icons.TbStar className="menu_icon" />,
+  },
       // Attributes
       // {
       //   name: "Attributes",
