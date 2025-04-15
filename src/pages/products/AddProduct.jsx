@@ -42,16 +42,19 @@ const AddProduct = ({ productData }) => {
     weight: 0,
     thumbnail: null,
     images: [],
-    batches: [{
-      batchNumber: "",
-      quantity: 1,
-      mfgDate: "",
-      expDate: ""
-    }],
+    batches: [
+      {
+        batchNumber: "",
+        quantity: 1,
+        mfgDate: "",
+        expDate: "",
+      },
+    ],
     variations: [],
     tags: [],
     hsn: "",
     tax: 0,
+    videoLink:"",
   };
 
   const [product, setProduct] = useState(editProduct || initialState);
@@ -76,7 +79,6 @@ const AddProduct = ({ productData }) => {
     attribute: "",
     attributeValue: "",
   });
-
 
   const handleInputChange = (key, value) => {
     setProduct({
@@ -217,7 +219,10 @@ const AddProduct = ({ productData }) => {
       let response;
       if (editProduct) {
         // Update existing product
-        response = await axiosPrivate.put(`${productRoute}/${editProduct._id}`, product);
+        response = await axiosPrivate.put(
+          `${productRoute}/${editProduct._id}`,
+          product
+        );
       } else {
         // Create a new product
         response = await axiosPrivate.post(productRoute, product);
@@ -232,7 +237,6 @@ const AddProduct = ({ productData }) => {
       toast.error("Something went wrong!");
     }
   };
-
 
   const saveAndExit = async () => {
     await submitHandler();
@@ -249,23 +253,25 @@ const AddProduct = ({ productData }) => {
     setProduct((prev) => ({
       ...prev,
       batches: [
-        ...prev.batches, {
+        ...prev.batches,
+        {
           batchNumber: "",
           quantity: 1,
           mfgDate: "",
-          expDate: ""
-        }]
-    }))
-  }
+          expDate: "",
+        },
+      ],
+    }));
+  };
 
-  const removeBatchRow = (index)=>{
-    const newArr = product?.batches?.filter((_, idx)=> index !== idx) ?? [];
+  const removeBatchRow = (index) => {
+    const newArr = product?.batches?.filter((_, idx) => index !== idx) ?? [];
 
     setProduct((prev) => ({
       ...prev,
-      batches: newArr
-    }))
-  }
+      batches: newArr,
+    }));
+  };
 
   return (
     <section>
@@ -298,12 +304,15 @@ const AddProduct = ({ productData }) => {
 
                 {product?.batches?.length > 0 &&
                   product?.batches?.map((item, index) => (
-                    <BatchRow key={index} batch={item} index={index} removeBatchRow={removeBatchRow} setProduct={setProduct} />
-                  ))
-                }
+                    <BatchRow
+                      key={index}
+                      batch={item}
+                      index={index}
+                      removeBatchRow={removeBatchRow}
+                      setProduct={setProduct}
+                    />
+                  ))}
               </div>
-
-
 
               <div className="column">
                 <Input
@@ -324,7 +333,15 @@ const AddProduct = ({ productData }) => {
                   onChange={(value) => handleInputChange("brand", value)}
                 />
               </div>
-
+              <div className="column">
+              <Input
+                type="text"
+                placeholder="Paste YouTube video link"
+                label="Product Video (YouTube)"
+                value={product.videoLink}
+                onChange={(value) => handleInputChange("videoLink", value)}
+              />
+            </div>
               <div className="column">
                 <TextEditor
                   label="Description"
@@ -334,7 +351,7 @@ const AddProduct = ({ productData }) => {
                 />
               </div>
             </div>
-
+           
             <div className="content_item">
               <h2 className="sub_heading">Product Images</h2>
               <FileUpload
@@ -372,7 +389,7 @@ const AddProduct = ({ productData }) => {
                 label="exit"
                 icon={<Icons.TbCircleCheck />}
                 className=""
-                onClick={()=>navigate("/catalog/product/manage")}
+                onClick={() => navigate("/catalog/product/manage")}
               />
             </div>
 
