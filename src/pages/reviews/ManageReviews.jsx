@@ -17,6 +17,8 @@ import useGetAllReviews from "../../hooks/reviewsHooks/useGetAllReviews.js";
 import TableSkeleton from "../../components/common/TableSkeleton.jsx";
 import ConfirmDeleteModal from "../../components/common/ConfirmDeleteModal.jsx";
 import { reviewsApi } from "../../lib/endPoints.js";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate.js";
+import { toast } from "sonner";
 
 const ManageReviews = () => {
   const [bulkCheck, setBulkCheck] = useState(false);
@@ -32,7 +34,7 @@ const ManageReviews = () => {
     { value: 10, label: "10" },
   ]);
   const { reviews, loading, error, refetch } = useGetAllReviews();
-
+  const axiosPrivate = useAxiosPrivate();
   const productIds = Reviews.map((review) => review.product_id.toString());
   const customerIds = Reviews.map((review) => review.customer_id.toString());
 
@@ -86,6 +88,7 @@ const ManageReviews = () => {
     var updateItem = item.toLowerCase();
     if (updateItem === "delete") {
       setSelectedItemID(itemID);
+      console.log(itemID)
       setIsModalOpen(true);
     } else if (updateItem === "edit") {
       navigate(`/reviews/${itemID}`);
@@ -102,12 +105,12 @@ const ManageReviews = () => {
       });
 
       if (response.status === 200) {
-        toast.success(`Product ${newStatus} successfully!`);
+        toast.success(`Review ${newStatus} successfully!`);
         refetch()
       }
     } catch (error) {
-      console.error("Error updating product status:", error);
-      toast.error("Failed to update product status.");
+      console.error("Error updating Review status:", error);
+      toast.error("Failed to update Review status.");
     } finally {
       setIsModalOpen(false); // Close modal after action
     }
@@ -179,7 +182,7 @@ const ManageReviews = () => {
                                 }
                               />
                             </td>
-                            <td className="td_id">{review._id}</td>
+                            <td className="td_id">{key+1}</td>
                             <td>{review?.productId?.name}</td>
                             <td>
                               <Link
@@ -203,7 +206,7 @@ const ManageReviews = () => {
                             </td>
 
                             <td className="td_status">
-                              {review.isArchived === false || review.isArchived === "unarchived" ? (
+                              {review.isArchived === false  ? (
                                 <Badge
                                   label="Active"
                                   className="light-success"
