@@ -163,7 +163,7 @@ const routes = [
   },
   // Reviews
   {
-    path: "/reviews",
+    path: "/catalog/reviews",
     element: <ManageReviews />,
   },
   {
